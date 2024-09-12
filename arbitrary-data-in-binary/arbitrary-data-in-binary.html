@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Put arbitrary data into binary &mdash; ITachi Lab Docs</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="canonical" href="https://itachi.pl/arbitrary-data-in-binary/arbitrary-data-in-binary.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Linker Script from scratch" href="../linker-script/linker-script.html" />
+    <link rel="prev" title="U-Boot on Raspberry" href="../u-boot-on-raspberry/u-boot-on-raspberry.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../lacrosse-tx3/lacrosse-tx3.html">Lacrosse TX3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../brainfuck-assembler/brainfuck-assembler.html">Brainfuck Assembler (BFA)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Raspberry Pi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../initramfs-pi/initramfs-pi.html">Raspberry Pi running from initramfs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../u-boot-on-raspberry/u-boot-on-raspberry.html">U-Boot on Raspberry</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Embedded</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Put arbitrary data into binary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#know-the-platform">Know the platform</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#analyze-the-linker-script">Analyze the linker script</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#include-with-incbin">Include with .incbin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#automate-with-macro">Automate with .macro</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../linker-script/linker-script.html">Linker Script from scratch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nrf-cmsis/nrf-cmsis.html">nRF52840 with CMSIS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Windows</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../robocopy/robocopy.html">Robocopy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0x204/0x204.html">Remote Desktop - Error 0x204</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lenovo-bluetooth/lenovo-bluetooth.html">Lenovo, Bluetooth and Windows 8.1</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Itachi Lab Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Put arbitrary data into binary</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/arbitrary-data-in-binary/arbitrary-data-in-binary.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="put-arbitrary-data-into-binary">
+<h1>Put arbitrary data into binary<a class="headerlink" href="#put-arbitrary-data-into-binary" title="Permalink to this heading"></a></h1>
+<p>When developing stuff for embedded platforms it might happen that there’s a need to include some arbitrary chunk of data into the final binary. When size of the data is not big, and it’s not expected to be modified frequently, it can be kept as a constant array of bytes, words, or whatever. Depending on a target platform and a toolchain, linker puts constants into the flash memory out of the box, or it might require additional steps. For example, on AVR platform one can use <a class="reference external" href="https://www.nongnu.org/avr-libc/user-manual/group__avr__pgmspace.html#ga75acaba9e781937468d0911423bc0c35">PROGMEM</a> <a class="footnote-reference brackets" href="#id1" id="id2">1</a> macro to mark objects which should be placed in the flash memory. On <a class="reference external" href="https://www.raspberrypi.com/products/rp2040/">RP2040</a> <a class="footnote-reference brackets" href="#id3" id="id4">2</a> (ARM) it should be enough to add <code class="docutils literal notranslate"><span class="pre">const</span></code> modifier because <code class="docutils literal notranslate"><span class="pre">.rodata</span></code> section is part of a flash region.</p>
+<p>It starts to be more complicated when size of the data is significant, let’s say it’s 2 MB. Why would anyone keep data that big on an embedded platform? Reasons are different, this can be some image to display, a WAV file to play, or a configuration file. No matter the reason, it’s going to be an horror to keep and maintain an array of 2 million elements. And what if the data changes? I can’t imagine recreating the array, even with some help of Python scripts. The ideal solution would be including these files automatically when the binary is built. Good news - it’s possible!</p>
+<section id="know-the-platform">
+<h2>Know the platform<a class="headerlink" href="#know-the-platform" title="Permalink to this heading"></a></h2>
+<p>Unfortunately, there’s no universal solution, as I mentioned in the introduction - different platforms might require different approaches. What’s universal though is the goal: the data must be in the flash memory, and it must be accessible from code. There’s no magic here, unless some fancy frameworks are in use, and everything usually starts from reading a linker script used for assembling the final binary. For this article I’m using RP2040, known better as: <em>Raspberry Pi Pico</em>.</p>
+<section id="analyze-the-linker-script">
+<h3>Analyze the linker script<a class="headerlink" href="#analyze-the-linker-script" title="Permalink to this heading"></a></h3>
+<p>A linker script used by default when building binaries for RP2040 is located at: <code class="docutils literal notranslate"><span class="pre">{SDK_ROOT}/src/rp2_common/pico_standard_link/memmap_default.ld</span></code>. The most interesting sections are those put to the <strong>FLASH</strong> region and having input sections named like they are meant to keep read-only data. For RP2040 I’ve got something like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>.rodata : {
+    *(EXCLUDE_FILE(*libgcc.a: *libc.a:*lib_a-mem*.o *libm.a:) .rodata*)
+    . = ALIGN(4);
+    *(SORT_BY_ALIGNMENT(SORT_BY_NAME(.flashdata*)))
+    . = ALIGN(4);
+} &gt; FLASH
+</pre></div>
+</div>
+<p>There are two important things happening here: the first is obviously presence of <code class="docutils literal notranslate"><span class="pre">.rodata</span></code> input section which is dedicated to constant data, and the second is an input section named <code class="docutils literal notranslate"><span class="pre">.flashdata*</span></code>. This is not a one of the well-known sections, this is something added by Raspberry guys, they foresaw what people would want to do. Generally speaking, this output section will consist of all <code class="docutils literal notranslate"><span class="pre">.rodata</span></code> sections from all object files (with a few minor exceptions), followed by sections which name starts with <code class="docutils literal notranslate"><span class="pre">.flashdata</span></code> and come from any object file.</p>
+<p>To start with, I created a simple, global <code class="docutils literal notranslate"><span class="pre">int</span></code> in my code:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">foobar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>I used it somewhere to prevent it from being optimized away, then I compiled the code and used <code class="docutils literal notranslate"><span class="pre">objdump</span></code> to see where it’s been placed:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ arm-none-eabi-objdump -t output.elf | grep foobar
+20000460 g     O .data  00000004 foobar
+</pre></div>
+</div>
+<p>What can be read from the output is that the <code class="docutils literal notranslate"><span class="pre">foobar</span></code> symbol lays in the <code class="docutils literal notranslate"><span class="pre">.data</span></code> section, what usually means it’s going to be accessible from RAM, but programmed into a flash memory. I said “usually” because it doesn’t have to be like that. The address of the symbol, visible in the first column, points to a RAM memory on RP2040 platform.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is the reason why it’s wise to avoid having global initialized variables in embedded systems - they need a space in RAM for the whole time of running a program, and also take space in a flash memory, becasue the initial value won’t magically appear out of nowhere. Of course it’s not a sin to use them when it’s necessary.</p>
+</div>
+<p>The goal is to put the data into a flash memory, so let’s compare two methods of doing this. I created the following global symbols in my code:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">foobar_const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="n">foobar_section</span><span class="w"> </span><span class="n">__attribute__</span><span class="w"> </span><span class="p">((</span><span class="n">section</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;.flashdata&quot;</span><span class="p">)))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>And object dump again:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ arm-none-eabi-objdump -t output.elf | grep foobar
+1000d014 g     O .rodata        00000004 foobar_section
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">foobar_section</span></code> now lives in the <code class="docutils literal notranslate"><span class="pre">.flashdata</span></code> section, and the address is a part of a flash region. But where is <code class="docutils literal notranslate"><span class="pre">foobar_const</span></code>? I expected it to appear under a similar address since I made it a <code class="docutils literal notranslate"><span class="pre">const</span></code>, but compiler decided to embed it in expressions instead, which is actually a good decision. Just for the presentation purposes I made it to don’t do that, so the dump now looks like below:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ arm-none-eabi-objdump -t output.elf | grep foobar
+10007c9c g     O .rodata        00000004 foobar_const
+1000d01c g     O .rodata        00000004 foobar_section
+</pre></div>
+</div>
+<p>Although both methods of storing data in a flash work correctly, using <code class="docutils literal notranslate"><span class="pre">const</span></code> for such purpose might give results not entirely expected, so let’s stick to the other method, and give a target section manually. However, this still doesn’t solve the problem of storing and supplying large chunks of data for compilation. For this, a little help of assembler is needed.</p>
+</section>
+</section>
+<section id="include-with-incbin">
+<h2>Include with .incbin<a class="headerlink" href="#include-with-incbin" title="Permalink to this heading"></a></h2>
+<p>ARM assembler (and other assemblers usually) supports a neat directive called: <a class="reference external" href="https://sourceware.org/binutils/docs/as/Incbin.html">.incbin</a> <a class="footnote-reference brackets" href="#id5" id="id6">3</a>. The purpose of this directive is of course to include a binary data from a file. Now, in order to use it, an assembler file must be created and added as a source file to the project. The content of the file should be:</p>
+<div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span><span class="w">    </span><span class="no">.flashdata</span><span class="w"></span>
+<span class="na">.balign</span><span class="w">     </span><span class="mi">4</span><span class="w"></span>
+<span class="na">.global</span><span class="w">     </span><span class="no">data_file_1</span><span class="w"></span>
+<span class="na">.global</span><span class="w">     </span><span class="no">data_file_1_size</span><span class="w"></span>
+<span class="nl">data_file_1:</span><span class="w"></span>
+<span class="na">.incbin</span><span class="w">     </span><span class="s">&quot;file1&quot;</span><span class="w"></span>
+<span class="na">.set</span><span class="w">        </span><span class="no">data_file_1_size</span><span class="p">,</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="p">-</span><span class="w"> </span><span class="no">data_file_1</span><span class="w"></span>
+</pre></div>
+</div>
+<p>This small piece of an assembly includes in the current position whatever is in the <strong>file1</strong> file. The “current position” is in this case somewhere in the <code class="docutils literal notranslate"><span class="pre">.flashdata</span></code> section, aligned to 4 bytes boundary. The actual placement is unknown until the file is compiled and linked. Thanks to having two global symbols - one with an address of the data, and second with its size - the data can be accessed later from a C code. Although having a separate symbol for the size is optional, it comes very handy.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Compiler will look for files given to <code class="docutils literal notranslate"><span class="pre">.incbin</span></code> directive in the include directories, i.e. directories supplied to compiler with the <code class="docutils literal notranslate"><span class="pre">-I</span></code> option. When using CMake, the directories can be added with <code class="docutils literal notranslate"><span class="pre">target_include_directories</span></code> function.</p>
+</div>
+<p>In order to use foreign symbols in a C code, they must be defined like this:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">extern</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">data_file_1</span><span class="p">[];</span><span class="w"></span>
+<span class="k">extern</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">data_file_1_size</span><span class="p">[];</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Type of the symbols doesn’t matter because they are only placeholders for the symbol values. The following object dump should help understand this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>1000d044 g       .rodata        00000000 data_file_1
+0000002d g       *ABS*  00000000 data_file_1_size
+</pre></div>
+</div>
+<p>The first column is a “symbol value”, that means this is the value to which the symbol will resolve when it’s used. For <code class="docutils literal notranslate"><span class="pre">data_file_1</span></code> the value is an address in a memory, but for <code class="docutils literal notranslate"><span class="pre">data_file_1_size</span></code> the value is just a raw number equal to the size of the data.</p>
+<p>On RP2040 I can now print the content to the console:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%.*s&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="n">data_file_1_size</span><span class="p">,</span><span class="w"> </span><span class="n">data_file_1</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+</div>
+<p>In my file I had some text content. It isn’t null-terminated by default, so I had to supply the size manually.</p>
+<section id="automate-with-macro">
+<h3>Automate with .macro<a class="headerlink" href="#automate-with-macro" title="Permalink to this heading"></a></h3>
+<p>Everything looks okay, until there’s a need to include 10, or 20 files. Quick copy-paste of the assembly listing I gave above would solve the problem, but this looks bad. What to do now? Of course - another directive!</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>.macro      incfile file:req, name:req
+.section    .flashdata
+.balign     4
+.global     \name
+.global     \name\()_size
+\name:
+.incbin     &quot;\file&quot;
+.set        \name\()_size, . - \name
+.endm
+</pre></div>
+</div>
+<p>This is the same code as before but wrapped in a macro. The macro takes two arguments: a file name, and a symbol name. Now, instead of ugly duplications, multiple files can be included like below:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>incfile file1,data_file_1
+incfile file2,data_file_2
+</pre></div>
+</div>
+<p>The symbols can be referenced later in a C code as before: <code class="docutils literal notranslate"><span class="pre">data_file_1</span></code>, <code class="docutils literal notranslate"><span class="pre">data_file_1_size</span></code>, <code class="docutils literal notranslate"><span class="pre">data_file_2</span></code>, and <code class="docutils literal notranslate"><span class="pre">data_file_2_size</span></code>.</p>
+<hr class="docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p><a class="reference external" href="https://www.nongnu.org/avr-libc/user-manual/group__avr__pgmspace.html#ga75acaba9e781937468d0911423bc0c35">https://www.nongnu.org/avr-libc/user-manual/group__avr__pgmspace.html#ga75acaba9e781937468d0911423bc0c35</a></p>
+</dd>
+<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
+<dd><p><a class="reference external" href="https://www.raspberrypi.com/products/rp2040/">https://www.raspberrypi.com/products/rp2040/</a></p>
+</dd>
+<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id6">3</a></span></dt>
+<dd><p><a class="reference external" href="https://sourceware.org/binutils/docs/as/Incbin.html">https://sourceware.org/binutils/docs/as/Incbin.html</a></p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../u-boot-on-raspberry/u-boot-on-raspberry.html" class="btn btn-neutral float-left" title="U-Boot on Raspberry" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../linker-script/linker-script.html" class="btn btn-neutral float-right" title="Linker Script from scratch" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Itachi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7S93SGB655"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-7S93SGB655', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

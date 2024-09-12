@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lacrosse TX3 &mdash; ITachi Lab Docs</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Brainfuck Assembler (BFA)" href="../brainfuck-assembler/brainfuck-assembler.html" />
+    <link rel="prev" title="Welcome to my knowledge base!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lacrosse TX3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#protocol-description">Protocol description</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#datagram">Datagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transmission">Transmission</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#transmission-test">Transmission test</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../brainfuck-assembler/brainfuck-assembler.html">Brainfuck Assembler (BFA)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Raspberry Pi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../initramfs-pi/initramfs-pi.html">Raspberry Pi running from initramfs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../u-boot-on-raspberry/u-boot-on-raspberry.html">U-Boot on Raspberry</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Embedded</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../linker-script/linker-script.html">Linker Script from scratch</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Windows</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../robocopy/robocopy.html">Robocopy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0x204/0x204.html">Remote Desktop - Error 0x204</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Itachi Lab Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Lacrosse TX3</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/lacrosse-tx3/lacrosse-tx3.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lacrosse-tx3">
+<h1>Lacrosse TX3<a class="headerlink" href="#lacrosse-tx3" title="Permalink to this heading"></a></h1>
+<p>Lacrosse TX3 is a protocol used by some weather stations to communicate with an external temperature sensor. I started exploring this subject when my temperature sensor had passed away and I decided to build my own. Unfortunately I didn’t have an opportunity to sniff the communication between the weather station and the temperature sensor, but I was lucky because it didn’t take me long to find similar product on the Internet with the protocol explained.</p>
+<p>I’ve found two pages that were very helpful. <a class="reference external" href="http://www.f6fbb.org/domo/sensors/tx3_th.php">F6FBB Lacrosse protocol</a> <a class="footnote-reference brackets" href="#id1" id="id2">1</a> describes details of Lacrosse TX3 datagrams, and <a class="reference external" href="http://www.f6fbb.org/domo/sensors/tx_signals.php">F6FBB Lacrosse timings</a> <a class="footnote-reference brackets" href="#id3" id="id4">2</a> gives hints on how to send them.</p>
+<section id="protocol-description">
+<h2>Protocol description<a class="headerlink" href="#protocol-description" title="Permalink to this heading"></a></h2>
+<p>Although all information can be found on the linked sites, I decided to rewrite them here, in case my website will be the only knowledge base after World War III.</p>
+<section id="datagram">
+<h3>Datagram<a class="headerlink" href="#datagram" title="Permalink to this heading"></a></h3>
+<p>Each datagram consists of 44 bits:</p>
+<img alt="../_images/lacrosse-tx3-datagram.png" src="../_images/lacrosse-tx3-datagram.png" />
+<dl>
+<dt>Preamble (8 bits)</dt><dd><p>It’s always <code class="docutils literal notranslate"><span class="pre">0x0A</span></code>, no matter what.</p>
+</dd>
+<dt>Type (4 bits)</dt><dd><p>According to the linked website, this is a type of measure. It can be <code class="docutils literal notranslate"><span class="pre">0x0</span></code> for temperature or <code class="docutils literal notranslate"><span class="pre">0xE</span></code> for humidity. I can’t verify humidity measurement, because my weather station is cheap, but I’m 100% sure that <code class="docutils literal notranslate"><span class="pre">0x0</span></code> works for temperature.</p>
+</dd>
+<dt>Address (7 bits)</dt><dd><p>Address of the sensor. It’s not described how weather stations should interpret this value, but I can say a few words about mine. When my weather station is firstly powered on, it waits for any transmission for about 90 seconds, and then it remembers address of every sensor (up to 4) that sent something. Depending on how many of them sent something during this time, my weather station allows me to switch between those readings. The station repeats waiting for readings every 2 or 3 minutes, but now it ignores all transmitters that weren’t learned on the beginning.</p>
+</dd>
+<dt>Parity (1 bit)</dt><dd><p>Parity bit works as a typical parity bit. It should be set when number of 1’s in the temperature part is odd. Sum of 1’s from the pink and yellow part should be even.</p>
+</dd>
+<dt>Temperature (12 bits)</dt><dd><p>Temperature is encoded on 12 bits as a packed <a class="reference external" href="https://en.wikipedia.org/wiki/Binary-coded_decimal">BCD</a> <a class="footnote-reference brackets" href="#id6" id="id7">3</a>. That means every nibble (4 bits) is a part of the resulting decimal, with the last digit being a fraction. For example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>0111 0011 0001 = 0x731
+
+7    3  . 1
+</pre></div>
+</div>
+<p>According to the result, temperature is <em>73.1</em> degrees. Pretty hot, isn’t it? Thankfully not. To get the correct value, <em>50</em> must be subtracted from the read result, and that’s it - <em>23.1</em> Celsius degrees. I’m not sure about origins of this offset, but I can only suspect this is a method of transmitting negative values. Every reading below 50 will result in a negative number, thus the minimum temperature the can be transmitted is -50 degrees (result equals to 0).</p>
+</dd>
+<dt>Repeated temperature (8 bits)</dt><dd><p>I don’t know why it’s there, but it should be equal to the first 8 bits of the temperature.</p>
+</dd>
+<dt>Checksum (4 bits)</dt><dd><p>Checksum is calculated by summing all nibbles together and then ANDing the sum with <code class="docutils literal notranslate"><span class="pre">0x0F</span></code>. In the above example it will be:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>0000  1010  0000  0000  1110  0111  0011  0001  0111  0011
+
+0x0 + 0xA + 0x0 + 0x0 + 0xE + 0x7 + 0x3 + 0x1 + 0x7 + 0x3 = 0x2D
+
+0x2D &amp; 0x0F = 0xD = 1101
+</pre></div>
+</div>
+</dd>
+</dl>
+</section>
+<section id="transmission">
+<h3>Transmission<a class="headerlink" href="#transmission" title="Permalink to this heading"></a></h3>
+<p>According to the <a class="reference external" href="http://www.f6fbb.org/domo/sensors/tx_signals.php">F6FBB Lacrosse timings</a> <a class="footnote-reference brackets" href="#id3" id="id5">2</a>, the data is sent at 433.92 MHz frequency, using OOK modulation, with bits being PWM encoded. The bit times given on that site are too precise, those Chinese weather stations aren’t that picky, so the bit times can be slightly rounded up or down.</p>
+<p>Each transmitted bit consists of two parts: a variable-length high state and a fixed-length low state. The table below contains the actual durations.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 43%" />
+<col style="width: 39%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>High state</p></th>
+<th class="head"><p>Low state</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>1300 us</p></td>
+<td><p>1000 us</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>500 us</p></td>
+<td><p>1000 us</p></td>
+</tr>
+</tbody>
+</table>
+<p>Datagrams are transmitted MSB first. I also send them twice, with 500 ms interval. I’m almost certain this is totally redundant, but apparently my weather station works better when I do so.</p>
+</section>
+</section>
+<section id="transmission-test">
+<h2>Transmission test<a class="headerlink" href="#transmission-test" title="Permalink to this heading"></a></h2>
+<p>I’ve built a prototype temperature transmitter on Nucleo F103RB and <a class="reference external" href="https://www.aurelwireless.com/wp-content/uploads/user-manual/650201033G_um.pdf">RTX-MID-3V</a> <a class="footnote-reference brackets" href="#id8" id="id9">4</a> transceiver. Using a 32-bit microcontroller for this project looks like an overkill, but the development board is just way simpler to use than reviving my old ATmega 16 and wiring it up on a breadboard. It was also a good opportunity to test my <a class="reference external" href="https://github.com/ITachiLab/nucleo-f103rb-cmsis-template">CMSIS template</a> <a class="footnote-reference brackets" href="#id10" id="id11">5</a>.</p>
+<img alt="../_images/test-setup.png" src="../_images/test-setup.png" />
+<p>That black thing on the breadboard is the transceiver. The pins, from the top to the bottom, are:</p>
+<ol class="arabic simple">
+<li><p>Antenna - it’s just a hanging wire, speaking professionally - monopole antenna</p></li>
+<li><p>Ground</p></li>
+<li><p>Not connected</p></li>
+<li><p>Data input (connected to <em>PA0</em>)</p></li>
+<li><p>TX/RX switch (connected to <em>PA1</em>)</p></li>
+<li><p>Enable / Disable (connected to <em>PA4</em>)</p></li>
+<li><p>Ground again</p></li>
+<li><p>Analog output</p></li>
+<li><p>Data output</p></li>
+<li><p>VCC</p></li>
+</ol>
+<hr class="docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p><a class="reference external" href="http://www.f6fbb.org/domo/sensors/tx3_th.php">http://www.f6fbb.org/domo/sensors/tx3_th.php</a></p>
+</dd>
+<dt class="label" id="id3"><span class="brackets">2</span><span class="fn-backref">(<a href="#id4">1</a>,<a href="#id5">2</a>)</span></dt>
+<dd><p><a class="reference external" href="http://www.f6fbb.org/domo/sensors/tx_signals.php">http://www.f6fbb.org/domo/sensors/tx_signals.php</a></p>
+</dd>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id7">3</a></span></dt>
+<dd><p><a class="reference external" href="https://en.wikipedia.org/wiki/Binary-coded_decimal">https://en.wikipedia.org/wiki/Binary-coded_decimal</a></p>
+</dd>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id9">4</a></span></dt>
+<dd><p><a class="reference external" href="https://www.aurelwireless.com/wp-content/uploads/user-manual/650201033G_um.pdf">https://www.aurelwireless.com/wp-content/uploads/user-manual/650201033G_um.pdf</a></p>
+</dd>
+<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id11">5</a></span></dt>
+<dd><p><a class="reference external" href="https://github.com/ITachiLab/nucleo-f103rb-cmsis-template">https://github.com/ITachiLab/nucleo-f103rb-cmsis-template</a></p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to my knowledge base!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../brainfuck-assembler/brainfuck-assembler.html" class="btn btn-neutral float-right" title="Brainfuck Assembler (BFA)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Itachi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

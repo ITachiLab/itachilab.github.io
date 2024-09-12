@@ -1,0 +1,24 @@
+Remote Desktop - Error 0x204
+============================
+
+Error **0x204** is something a MacOS user can spot when connecting to a Remote Desktop running on a Windows machine. If none of the troubleshooting guides was helpful, and every possible "solution" has already been tried, there's one more that could work.
+
+I started having this error out of sudden. At first, I suspected my corporate's VPN application being the cause. I've tried a bunch of things in order to solve this problem, but none of them helped. I tried:
+
+- restarting Remote Desktop service,
+- changing port,
+- adding ``mstc.exe`` to firewall,
+- changing options in the client software,
+- and a few more I don't even remember.
+
+Once, just out of curiosity, I've disabled the firewall completely, and... whoosh! I can connect! Leaving the firewall disabled is not the smartest thing to do, so I was looking for how to enable Remote Desktop on firewall (apparently it's blocked).
+
+The solution I've found was pretty simple: add "Remote Desktop" to allowed programs in firewall settings. I would do that 3 hours earlier, but there wasn't such option on the list of programs. I had plenty of different programs, but not this one. And then, I've found a question on `SuperUser <https://superuser.com/a/904361/297493>`__. Following the answer, I ran the following command in the command line with administrator privileges::
+
+    netsh firewall set service type = remotedesktop mode = enable
+
+It worked like a charm.
+
+The reason why I'm creating an article in which I just embedded a link to an answer is that it took me some time to realise that the error I was seeing is caused by some missing rule in the firewall. I've been googling for "0x204 remote desktop", and every site was barely helpful. They were just copy-pasting the same useless tips like: make sure the Remote Desktop is enabled. It's like having a problem with a car, and then someone walks to you and asks: "Hey, did you try to turn the key?", then another person comes by and asks: "Hey, maybe you've ran out of fuel?".
+
+I've found the SU question only when I started suspecting problems with the firewall, so I googled strictly for that.

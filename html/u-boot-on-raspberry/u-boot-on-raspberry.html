@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>U-Boot on Raspberry &mdash; ITachi Lab Docs</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Linker Script from scratch" href="../linker-script/linker-script.html" />
+    <link rel="prev" title="Raspberry Pi running from initramfs" href="../initramfs-pi/initramfs-pi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../lacrosse-tx3/lacrosse-tx3.html">Lacrosse TX3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../brainfuck-assembler/brainfuck-assembler.html">Brainfuck Assembler (BFA)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Raspberry Pi</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../initramfs-pi/initramfs-pi.html">Raspberry Pi running from initramfs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">U-Boot on Raspberry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tools-and-stuff">Tools and stuff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prepare-the-host-machine">Prepare the host machine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#get-the-arm-toolchain">Get the ARM toolchain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clone-u-boot">Clone U-Boot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#build-u-boot">Build U-Boot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#before-hitting-the-red-button">Before hitting the red button</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#enable-uart-on-raspberry">Enable UART on Raspberry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#know-the-kernel-command-line">Know the Kernel command line</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#hit-the-red-button">Hit the red button</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-extra-steps">The extra steps</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fix-device-tree-file">Fix Device Tree file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fix-kernel-boot-args">Fix kernel boot args</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fix-kernel-image">Fix kernel image</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#boot">Boot!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extras">Extras</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dynamic-kernel-command-line">Dynamic kernel command line</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Embedded</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../linker-script/linker-script.html">Linker Script from scratch</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Windows</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../robocopy/robocopy.html">Robocopy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0x204/0x204.html">Remote Desktop - Error 0x204</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Itachi Lab Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">U-Boot on Raspberry</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/u-boot-on-raspberry/u-boot-on-raspberry.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="u-boot-on-raspberry">
+<h1>U-Boot on Raspberry<a class="headerlink" href="#u-boot-on-raspberry" title="Permalink to this heading"></a></h1>
+<p>Though it’s not very common, it is sometimes desirable to replace the original Raspberry’s bootloader with something more customizable like: <a class="reference external" href="https://www.denx.de/wiki/U-Boot">Das U-Boot</a> <a class="footnote-reference brackets" href="#id1" id="id2">1</a>. Having a handcrafted bootloader on an embedded system has a number of advantages:</p>
+<ul class="simple">
+<li><p>booting from other sources, like: network or USB,</p></li>
+<li><p>firmware upgrade,</p></li>
+<li><p>getting back to fail-safe state after messing up something,</p></li>
+<li><p>flexible kernel select,</p></li>
+<li><p>virtually anything one would want to do before the OS starts.</p></li>
+</ul>
+<p>I had a hard time looking for some good knowledge source covering this topic. The only webpage that gave me lots of hints was <a class="reference external" href="https://elinux.org/RPi_U-Boot">eLinux</a> <a class="footnote-reference brackets" href="#id3" id="id4">2</a>, though it had some outdated information. Eventually, I’ve managed to achieve the desired result, using the above source and going through many trials and errors.</p>
+<section id="tools-and-stuff">
+<h2>Tools and stuff<a class="headerlink" href="#tools-and-stuff" title="Permalink to this heading"></a></h2>
+<p>Here’s a list of things I’ve beein using during the development and testing:</p>
+<dl class="simple">
+<dt>Raspberry Pi Zero W</dt><dd><p>The device I’m targeting.</p>
+</dd>
+<dt>SD card with Raspbian</dt><dd><p>Something to boot.</p>
+</dd>
+<dt>Lubuntu</dt><dd><p>Host machine where U-Boot is built. Any Linux distro will be okay.</p>
+</dd>
+<dt>USB to UART adapter</dt><dd><p>Even though U-Boot supports HDMI and USB, it’s more convenient to connect directly to Raspberry’s serial port.</p>
+</dd>
+</dl>
+</section>
+<section id="prepare-the-host-machine">
+<h2>Prepare the host machine<a class="headerlink" href="#prepare-the-host-machine" title="Permalink to this heading"></a></h2>
+<section id="get-the-arm-toolchain">
+<h3>Get the ARM toolchain<a class="headerlink" href="#get-the-arm-toolchain" title="Permalink to this heading"></a></h3>
+<p>The first and foremost step is installation of the ARM toolchain. On distros like Ubuntu it’s really straightforward:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt install git build-essential crossbuild-essential-armhf
+</pre></div>
+</div>
+<p>It might happen that the above set of packages won’t be sufficient for the setup. In that case, just install what’s missing, there’s no magic here.</p>
+</section>
+<section id="clone-u-boot">
+<h3>Clone U-Boot<a class="headerlink" href="#clone-u-boot" title="Permalink to this heading"></a></h3>
+<p>The best way to get the newest U-Boot is of course GitHub:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git clone -b master --depth 1 https://github.com/u-boot/u-boot.git
+cd u-boot
+</pre></div>
+</div>
+<p>The additional arguments to <code class="docutils literal notranslate"><span class="pre">git</span></code> command saves lots of time, as they instruct git to clone only the tip of the master branch.</p>
+</section>
+</section>
+<section id="build-u-boot">
+<h2>Build U-Boot<a class="headerlink" href="#build-u-boot" title="Permalink to this heading"></a></h2>
+<p>This step is pretty easy and shouldn’t cause troubles. Just make sure appropriate cross compilation environment variable are present, so U-Boot will be built for ARM.</p>
+<p>It’s important to select <em>defconfig</em> appropriate to the target Raspberry. Available <em>defconfigs</em> are grouped inside the <code class="docutils literal notranslate"><span class="pre">configs</span></code> directory. In case the wrong <em>defconfig</em> will be used, U-Boot will simply fail to run. When everything is prepared, the magic spell to build U-Boot is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>export CROSS_COMPILE=arm-linux-gnueabihf-
+make rpi_0_w_defconfig
+make -j8 -s
+</pre></div>
+</div>
+<p>The compilation should be quite fast, it really depends on a CPU of the host. When it’s finished without errors, a <code class="docutils literal notranslate"><span class="pre">u-boot.bin</span></code> file should be present in the current directory.</p>
+</section>
+<section id="before-hitting-the-red-button">
+<h2>Before hitting the red button<a class="headerlink" href="#before-hitting-the-red-button" title="Permalink to this heading"></a></h2>
+<p>Everything required to write U-Boot to the SD card, and set it as the default boot target is ready. But before that can happen, there are a couple of additional steps.</p>
+<section id="enable-uart-on-raspberry">
+<h3>Enable UART on Raspberry<a class="headerlink" href="#enable-uart-on-raspberry" title="Permalink to this heading"></a></h3>
+<p>In order to communicate with U-Boot freely, UART on Raspberry must be enabled. This can be easily accomplished by modifying <code class="docutils literal notranslate"><span class="pre">config.txt</span></code> file living in the <code class="docutils literal notranslate"><span class="pre">boot</span></code> partition of the SD card. The following line should be added anywhere in the file:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>enable_uart=1
+</pre></div>
+</div>
+</section>
+<section id="know-the-kernel-command-line">
+<h3>Know the Kernel command line<a class="headerlink" href="#know-the-kernel-command-line" title="Permalink to this heading"></a></h3>
+<p>When Raspberry boots the usual way, after the 3rd stage bootloader finishes its tasks, it runs <code class="docutils literal notranslate"><span class="pre">start.elf</span></code> which parses <code class="docutils literal notranslate"><span class="pre">config.txt</span></code> as one of its steps, and appends appropriate arguments to kernel’s command line. They are not copied 1:1, that would be too simple. For example, <code class="docutils literal notranslate"><span class="pre">enable_uart=1</span></code> results in <code class="docutils literal notranslate"><span class="pre">8250.nr_uarts=1</span></code> being added to the kernel’s command line.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For the sake of clarity: <strong>8250</strong> is a kernel module named “8250”, <strong>nr_uarts</strong> is the module’s option, and <strong>1</strong> is a new value of this option. This is equivalent of invoking: <code class="docutils literal notranslate"><span class="pre">modprobe</span> <span class="pre">8250</span> <span class="pre">nr_uarts=1</span></code> within the shell.</p>
+</div>
+<p>This is important to understand because U-Boot is going to be injected into the boot chain between <code class="docutils literal notranslate"><span class="pre">start.elf</span></code> and kernel image. Kernel won’t receive these arguments anymore, they all go to U-Boot now, so U-Boot is responsible for supplying them to the kernel’s command line. This sounds tricky, and is even trickier.</p>
+<p>The easiest, yet not so flexible method, is to peek the actual command line of the running system, and simply use it in U-Boot as the kernel’s command line. Let’s say the current Raspberry’s configuration is satisfactory, and it’s not supposed to be changed soon. If that’s true, the current command line can be easily displayed with the following command, and saved somewhere for later:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>cat /proc/cmdline
+</pre></div>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Manipulating the kernel’s command line manually doesn’t mean the <code class="docutils literal notranslate"><span class="pre">config.txt</span></code> file is no longer needed. Raspberry’s CPU still needs it for example to enable UART or select image to boot.</p>
+</div>
+</section>
+</section>
+<section id="hit-the-red-button">
+<h2>Hit the red button<a class="headerlink" href="#hit-the-red-button" title="Permalink to this heading"></a></h2>
+<p>U-Boot is ready to be written to the SD card, and to be set as the boot source. In order to do that, <code class="docutils literal notranslate"><span class="pre">u-boot.bin</span></code> must be copied to the <em>boot</em> partition of the SD card, and an additional entry in <code class="docutils literal notranslate"><span class="pre">config.txt</span></code> must be added, so the board knows what to boot:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>kernel=u-boot.bin
+</pre></div>
+</div>
+<p>The USB-UART adapter can now be connected to Raspberry with the following options:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Baudrate</dt>
+<dd class="field-odd"><p>115200</p>
+</dd>
+<dt class="field-even">Data bits</dt>
+<dd class="field-even"><p>8</p>
+</dd>
+<dt class="field-odd">Stop bits</dt>
+<dd class="field-odd"><p>1</p>
+</dd>
+<dt class="field-even">Parity</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Flow control</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p>For minicom:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sudo minicom -w -b 115200 -D /dev/tty[something]
+</pre></div>
+</div>
+<p>As soon as Raspberry is powered on, it should put some U-Boot stuff on the terminal and do nothing more. The task has failed successfully, because there are a couple of additional steps to follow.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If nothing pops up on the terminal, make sure the communication parameters are correct, and UART is enabled. If that seems to be okay, another cause could be messed up U-Boot build. Check correctness of defconfig, CROSS_COMPILE env, and the whole compilation process.</p>
+</div>
+<section id="the-extra-steps">
+<h3>The extra steps<a class="headerlink" href="#the-extra-steps" title="Permalink to this heading"></a></h3>
+<p>There are a couple of things to fix in U-Boot so it can boot the kernel properly:</p>
+<ul class="simple">
+<li><p>Device Tree file is wrong.</p></li>
+<li><p>Kernel’s boot arguments are not set.</p></li>
+<li><p>U-Boot can’t find the image to boot.</p></li>
+</ul>
+<p>Thankfully these are the only inconveniences, and the rest is a pure fun. I promise!</p>
+<section id="fix-device-tree-file">
+<h4>Fix Device Tree file<a class="headerlink" href="#fix-device-tree-file" title="Permalink to this heading"></a></h4>
+<p>Raspbian’s kernel requires a Device Tree file to boot properly. This file must be loaded into RAM prior to booting, and the loading address shall be given to kernel. The DT file is read from the SD card, and its name is kept in <code class="docutils literal notranslate"><span class="pre">fdtfile</span></code> env variable. The current content of the variable can be examined like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; env print fdtfile
+fdtfile=bcm2835-rpi-zero-w.dtb
+</pre></div>
+</div>
+<p>The problem here is that this file doesn’t exist on the SD card, but there’s another: <code class="docutils literal notranslate"><span class="pre">bcm2708-rpi-zero-w.dtb</span></code>, so it must be used instead of the missing one:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; setenv fdtfile bcm2708-rpi-zero-w.dtb
+</pre></div>
+</div>
+</section>
+<section id="fix-kernel-boot-args">
+<h4>Fix kernel boot args<a class="headerlink" href="#fix-kernel-boot-args" title="Permalink to this heading"></a></h4>
+<p>For most of the time, kernel needs some additional arguments, let it be location of the root file system, or configuration of the device. These additional parameters are called “command line” or simply “boot arguments (args)”. In U-Boot, there’s a dedicated env variable called <em>bootargs</em> that will be automatically passed to the kernel on boot.</p>
+<p>The command line arguments obtained in <a class="reference internal" href="#know-the-kernel-command-line">Know the Kernel command line</a> will be needed here. They must become the new value of the <code class="docutils literal notranslate"><span class="pre">bootargs</span></code> variable:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; setenv bootargs console=ttyS0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait
+</pre></div>
+</div>
+</section>
+<section id="fix-kernel-image">
+<h4>Fix kernel image<a class="headerlink" href="#fix-kernel-image" title="Permalink to this heading"></a></h4>
+<p>The last thing to do is to point U-Boot to the valid kernel image that can be actually booted. The kernel image is on the SD card, but it must be inside RAM to be executed. In order to copy anything from an external source like the mentioned SD card, or a USB flash drive, the device must be first selected. Usually it is SD card, so the first step is to select it:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; mmc dev 0
+</pre></div>
+</div>
+<p>The above command selects an MMC device at index 0. Raspberry has only one SD card slot, thus “0” is always a valid option. In contrast, USB can have multiple flash drives connected to it, and each will have a different index; it’s up to the developer to select the correct one. All USB devices can be listed with this command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; usb info
+</pre></div>
+</div>
+<p>Let’s get back on the track. When the proper MMC device is selected, any file from it can be loaded into RAM with just one command. In this case this will be the kernel image, and the Device Tree file, both of them has to be put somewhere into RAM to be usable. Fortunately, the correct load addresses are already set in U-Boot.</p>
+<p>The right command to use is <em>fatload</em> and it does exactly what it means - it loads a file from a FAT partition:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; fatload mmc 0:1 ${kernel_addr_r} kernel.img
+U-Boot&gt; fatload mmc 0:1 ${fdt_addres} ${fdtfile}
+</pre></div>
+</div>
+<p>The syntax of the command is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>fatload [device type] [device index]:[partition] [load address] [source file]
+</pre></div>
+</div>
+<p>The first command copies <code class="docutils literal notranslate"><span class="pre">kernel.img</span></code> to the address stored in the <code class="docutils literal notranslate"><span class="pre">kernel_addr_r</span></code> env variable. The image file should be available on the first partition of the MMC 0 device. MMC 0 always points to an SD card slot on a Raspberry board, and the first partition is the <em>boot</em> partition. When the SD card is partitioned differently, the correct numbers has to be figured out beforehand.</p>
+<p>The second command works exactly the same and copies the Device Tree file.</p>
+</section>
+</section>
+</section>
+<section id="boot">
+<h2>Boot!<a class="headerlink" href="#boot" title="Permalink to this heading"></a></h2>
+<p>This time everything is prepared and should work flawlessly. The command to boot the kernel is given below, but <strong>don’t do this yet</strong>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; bootz ${kernel_addr_r} - ${fdt_addr}
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">bootz</span></code> is a command that boots a gzipped kernel image. The additional parameters are:</p>
+<dl class="field-list simple">
+<dt class="field-odd"><cite>${kernel_addr_r}</cite></dt>
+<dd class="field-odd"><p>Environment variable with a memory address of where the kernel image was loaded.</p>
+</dd>
+<dt class="field-even"><cite>-</cite></dt>
+<dd class="field-even"><p>Boot without initrd.</p>
+</dd>
+<dt class="field-odd"><cite>${fdt_addr}</cite></dt>
+<dd class="field-odd"><p>Environment variable with a memory address of where Device Tree blob file was loaded.</p>
+</dd>
+</dl>
+<p>Every (healthy) programmer at this point should start thinking: “Can all of that be automated somehow? This is so much work to do”. Yes! The answer is: environment variables.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; setenv rpi_boot &#39;fatload mmc 0:1 ${kernel_addr_r} kernel.img; fatload mmc 0:1 ${fdt_addr} ${fdtfile}; bootz ${kernel_addr_r} - ${fdt_addr}&#39;
+U-Boot&gt; setenv bootcmd run rpi_boot
+U-Boot&gt; saveenv
+</pre></div>
+</div>
+<p>The first command sets a new <code class="docutils literal notranslate"><span class="pre">rpi_boot</span></code> env variable to the provided string. The string itself is a concatenation of commands given to U-Boot so far. The second command sets a new value for <code class="docutils literal notranslate"><span class="pre">bootcmd</span></code> variable, and the last command persists environment, meaning that the environment variables will be available after power loss.</p>
+<p>Here’s what will happen after the RPi is powered: When U-Boot’s auto-start won’t be interrupted by a key, it will run the default <em>boot</em> command. This command simply executes <code class="docutils literal notranslate"><span class="pre">run</span> <span class="pre">bootcmd</span></code> (<code class="docutils literal notranslate"><span class="pre">run</span></code> treats arguments like commands), and that eventually executes <code class="docutils literal notranslate"><span class="pre">run</span> <span class="pre">rpi_boot</span></code> with the additional arguments.</p>
+<p>Raspberry can now be powered off and on again in order to verify that everything works correctly. U-Boot should appear on the terminal for a short moment, and after a couple of seconds it should proceed with booting the kernel.</p>
+</section>
+<section id="extras">
+<h2>Extras<a class="headerlink" href="#extras" title="Permalink to this heading"></a></h2>
+<section id="dynamic-kernel-command-line">
+<h3>Dynamic kernel command line<a class="headerlink" href="#dynamic-kernel-command-line" title="Permalink to this heading"></a></h3>
+<p>The most annoying and fishy step in this tutorial is deliberately hardcoding the kernel command line; this shouldn’t work like that. The command line is generated automatically when Raspberry starts, so it also should be automatically given to the kernel, but U-Boot prevents that from happening. Moreover, it is so stubborn, that I couldn’t find any official way of forcing it to pass the command line down to the kernel image.</p>
+<p>I’m stubborn too…</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>This is experimental! I can’t guarantee it will work for everyone.</p>
+</div>
+<p>A funny thing will happen when the below command is executed in U-Boot shell:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; md.w 0x710 128
+</pre></div>
+</div>
+<p>This command tells U-Boot to print 128 words starting from address <code class="docutils literal notranslate"><span class="pre">0x710</span></code>. The ASCII column of the output should ring a bell:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>00000710: 6f63 6568 6572 746e 705f 6f6f 3d6c 4d31    coherent_pool=1M
+00000720: 3820 3532 2e30 726e 755f 7261 7374 313d     8250.nr_uarts=1
+00000730: 7320 646e 625f 6d63 3832 3533 652e 616e     snd_bcm2835.ena
+00000740: 6c62 5f65 6f63 706d 7461 615f 736c 3d61    ble_compat_alsa=
+00000750: 2030 6e73 5f64 6362 326d 3338 2e35 6e65    0 snd_bcm2835.en
+00000760: 6261 656c 685f 6d64 3d69 2031 6362 326d    able_hdmi=1 bcm2
+00000770: 3037 5f38 6266 662e 7762 6469 6874 313d    708_fb.fbwidth=1
+00000780: 3832 2030 6362 326d 3037 5f38 6266 662e    280 bcm2708_fb.f
+00000790: 6862 6965 6867 3d74 3237 2030 6362 326d    bheight=720 bcm2
+000007a0: 3037 5f38 6266 662e 7362 6177 3d70 2031    708_fb.fbswap=1
+000007b0: 6d73 6373 3539 7878 6d2e 6361 6461 7264    smsc95xx.macaddr
+000007c0: 423d 3a38 3732 453a 3a42 3636 453a 3a44    =B8:27:EB:66:ED:
+000007d0: 4337 7620 5f63 656d 2e6d 656d 5f6d 6162    7C vc_mem.mem_ba
+000007e0: 6573 303d 3178 6365 3030 3030 2030 6376    se=0x1ec00000 vc
+000007f0: 6d5f 6d65 6d2e 6d65 735f 7a69 3d65 7830    _mem.mem_size=0x
+00000800: 3032 3030 3030 3030 2020 6f63 736e 6c6f    20000000  consol
+00000810: 3d65 7474 5379 2c30 3131 3235 3030 6320    e=ttyS0,115200 c
+00000820: 6e6f 6f73 656c 743d 7974 2031 6f72 746f    onsole=tty1 root
+00000830: 503d 5241 5554 4955 3d44 3432 6434 3032    =PARTUUID=244d20
+00000840: 6337 302d 2032 6f72 746f 7366 7974 6570    7c-02 rootfstype
+00000850: 653d 7478 2034 6c65 7665 7461 726f 643d    =ext4 elevator=d
+00000860: 6165 6c64 6e69 2065 7366 6b63 722e 7065    eadline fsck.rep
+00000870: 6961 3d72 6579 2073 6f72 746f 6177 7469    air=yes rootwait
+00000880: 0000 e803 0000 0100 6f62 746f 6f6c 6461    ........bootload
+</pre></div>
+</div>
+<p>Apparently this is the command line generated for the kernel, but never reaching it, because of U-Boot. It’d be nice to have it as an env variable, so it could be used for booting:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; setexpr.s bootargs *0x710
+</pre></div>
+</div>
+<p>This command sets the env variable (<em>bootargs</em>) to the result of the expression, and the expression itself shall be treated as a string (setexpr**.s**). The expression is a memory pointer treated like a string, so it will contain all characters starting from address <code class="docutils literal notranslate"><span class="pre">0x710</span></code> all the way down until the 0x00 byte. Let’s see the result:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; env print bootargs
+bootargs=coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_compat_alsa=0 snd_bcm2835.enable_hdmi=1 bcm2708_fb.fbwidth=1280 bcm2708_fb.fbheight=720 bcm2708_fb.fbswap=1 smsc95xx.macaddr=B8:27:EB:66:ED:7C vc_mem.mem_base=0x1ec00000 vc_mem.mem_size=0x20000000  console=ttyS0,115200 console=tty1 root=PARTUUID=244d207c-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait
+</pre></div>
+</div>
+<p>And now integrate it with the <code class="docutils literal notranslate"><span class="pre">boot_rpi</span></code> command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>U-Boot&gt; setenv boot_rpi &#39;setexpr.s bootargs *0x710; mmc dev 0; fatload mmc 0:1 ${kernel_addr_r} kernel.img; fatload mmc 0:1 ${fdt_addr} ${fdtfile}; bootz ${kernel_addr_r} - ${fdt_addr}&#39;
+U-Boot&gt; saveenv
+</pre></div>
+</div>
+<p>Thanks to this, the kernel will always boot with proper command line options.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This won’t work for the <em>dtoverlay</em> options in config.txt. Device Tree overlays are applied differently. This is of course possible in U-Boot, but requires extra work.</p>
+</div>
+<hr class="docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p><a class="reference external" href="https://www.denx.de/wiki/U-Boot">https://www.denx.de/wiki/U-Boot</a></p>
+</dd>
+<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
+<dd><p><a class="reference external" href="https://elinux.org/RPi_U-Boot">https://elinux.org/RPi_U-Boot</a></p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../initramfs-pi/initramfs-pi.html" class="btn btn-neutral float-left" title="Raspberry Pi running from initramfs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../linker-script/linker-script.html" class="btn btn-neutral float-right" title="Linker Script from scratch" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Itachi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

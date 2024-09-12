@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linker Script from scratch &mdash; ITachi Lab Docs</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="canonical" href="https://itachi.pl/linker-script/linker-script.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="nRF52840 with CMSIS" href="../nrf-cmsis/nrf-cmsis.html" />
+    <link rel="prev" title="Put arbitrary data into binary" href="../arbitrary-data-in-binary/arbitrary-data-in-binary.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../lacrosse-tx3/lacrosse-tx3.html">Lacrosse TX3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../brainfuck-assembler/brainfuck-assembler.html">Brainfuck Assembler (BFA)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Raspberry Pi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../initramfs-pi/initramfs-pi.html">Raspberry Pi running from initramfs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../u-boot-on-raspberry/u-boot-on-raspberry.html">U-Boot on Raspberry</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Embedded</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../arbitrary-data-in-binary/arbitrary-data-in-binary.html">Put arbitrary data into binary</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Linker Script from scratch</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prepare-tools">Prepare tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prepare-knowledge">Prepare knowledge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stupidly-simple-linker-script-ssls">Stupidly Simple Linker Script (SSLS)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#limitations">Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#simple-linker-script-sls">Simple Linker Script (SLS)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#memory-block">MEMORY block</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#what-about-uninitialized-variables">What about uninitialized variables?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#linker-script-ls">Linker Script (LS)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entry-point-and-stack-definitions">Entry point and stack definitions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../nrf-cmsis/nrf-cmsis.html">nRF52840 with CMSIS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Windows</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../robocopy/robocopy.html">Robocopy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0x204/0x204.html">Remote Desktop - Error 0x204</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lenovo-bluetooth/lenovo-bluetooth.html">Lenovo, Bluetooth and Windows 8.1</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Itachi Lab Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Linker Script from scratch</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/linker-script/linker-script.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="linker-script-from-scratch">
+<h1>Linker Script from scratch<a class="headerlink" href="#linker-script-from-scratch" title="Permalink to this heading"></a></h1>
+<p>In this article I’m going to show how to create a simple yet functional linker script. I’m going to target an STM32 microcontroller, because embedded targets are usually the reason why someone would like to create a linker script. The linker script created in this article can’t compete with the linker script provided by the manufacturer, and it’s not a purpose of this article to create something better. The goal is to understand how these linker scripts are created and to see that it isn’t impossible to create one on your own.</p>
+<p>This article describes three main points:</p>
+<ul class="simple">
+<li><p>how to write a simple linker script from scratch,</p></li>
+<li><p>how to do this for STM32 microcontrollers,</p></li>
+<li><p>how to avoid using vendor’s files (headers, codes etc.)</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is something new for me as well. I’m always using scripts provided by vendors, but I decided to do this by myself, partially because I like raping my brain, but mostly to learn something new. I really recommend going through the <a class="reference external" href="https://allthingsembedded.com/post/2020-04-11-mastering-the-gnu-linker-script/">Mastering the GNU linker script</a> <a class="footnote-reference brackets" href="#id8" id="id9">4</a> article first.</p>
+</div>
+<p>I decided to focus on linker scripts for microcontrollers, because they require good understanding of the target platform, and gives an opportunity to decide about everything (mostly).</p>
+<section id="prepare-tools">
+<h2>Prepare tools<a class="headerlink" href="#prepare-tools" title="Permalink to this heading"></a></h2>
+<p>Two things are needed to start: ARM toolchain, and a text editor. The newest ARM toolchain can be downloaded directly from <a class="reference external" href="https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads">ARM</a> <a class="footnote-reference brackets" href="#id1" id="id2">1</a>.  On Linux, the toolchain can be just extracted anywhere and prepended to the <code class="docutils literal notranslate"><span class="pre">PATH</span></code> environment variable:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>export PATH=/your/toolchain/bin:$PATH
+</pre></div>
+</div>
+</section>
+<section id="prepare-knowledge">
+<h2>Prepare knowledge<a class="headerlink" href="#prepare-knowledge" title="Permalink to this heading"></a></h2>
+<p>It’s ultimately important to know the memory layout of the target devices. It’s impossible to write a linker script without knowing where to put the code, where to put data etc. The memory layout differs between architectures and devices, so the only way to know “what and where” is to grab a datasheet, and find the information in it. For <em>STM32F103RBT6</em> it can be found in its <a class="reference external" href="https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf">reference manual</a> <a class="footnote-reference brackets" href="#id3" id="id4">2</a> on page <strong>53</strong> (for SRAM) and page <strong>54</strong> (for flash).</p>
+<dl class="field-list simple">
+<dt class="field-odd">SRAM</dt>
+<dd class="field-odd"><p>0x20000000</p>
+</dd>
+<dt class="field-even">Flash</dt>
+<dd class="field-even"><p>0x08000000</p>
+</dd>
+</dl>
+<p>This essentially means that the code must be available at address <code class="docutils literal notranslate"><span class="pre">0x08000000</span></code>, and all variable data at <code class="docutils literal notranslate"><span class="pre">0x20000000</span></code>. It will be explained later in more detail.</p>
+<p>The next important thing is to know how a microcontroller boots. For most of the time the developer is responsible for setting up the stack pointer at device boot time and this is done differently for different architectures. The recipe is straightforward: find how to set up stack pointer, and set it up to the top of the SRAM memory. It’s logical, the stack always grows downwards so it has to have space to grow.</p>
+<p>For the STM32 used for this article, this information can be found on page <strong>61</strong> in the <a class="reference external" href="https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf">reference manual</a> <a class="footnote-reference brackets" href="#id3" id="id5">2</a>.</p>
+<blockquote>
+<div><p>After this startup delay has elapsed, the CPU fetches the top-of-stack value from address <code class="docutils literal notranslate"><span class="pre">0x00000000</span></code>, then starts code execution from the boot memory starting from <code class="docutils literal notranslate"><span class="pre">0x00000004</span></code>.</p>
+</div></blockquote>
+<p>Excellent, more useful things to write down.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Stack initializer</dt>
+<dd class="field-odd"><p>0x00000000</p>
+</dd>
+<dt class="field-even">Entry point</dt>
+<dd class="field-even"><p>0x00000004</p>
+</dd>
+</dl>
+<p>There’s also one more important thing to know about STM32, and this is explained on the page <strong>61</strong> too. When the CPU reads from address <code class="docutils literal notranslate"><span class="pre">0x00000000</span></code> and further, it actually might access different memories, depending on a selected boot mode. This is called “memory mapping”. By default, STM32 boots from flash, so it maps memory region <code class="docutils literal notranslate"><span class="pre">0x08000000</span></code> to <code class="docutils literal notranslate"><span class="pre">0x00000000</span></code>; the flash memory is now accessible both from its original address and <code class="docutils literal notranslate"><span class="pre">0x00000000</span></code>. This allows CPU to start reading instructions directly from flash.</p>
+<p>Having the above information in mind, and assuming the code will be put into the flash memory, the final addresses are:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Stack initializer</dt>
+<dd class="field-odd"><p>0x08000000</p>
+</dd>
+<dt class="field-even">Entry point</dt>
+<dd class="field-even"><p>0x08000004</p>
+</dd>
+</dl>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>The entry point address <strong>is not</strong> where execution will start. It should contain the address where CPU should jump to start the execution. In other words, dword from <code class="docutils literal notranslate"><span class="pre">0x00000000</span></code> will be loaded to SP register, and dword from <code class="docutils literal notranslate"><span class="pre">0x00000004</span></code> will be loaded to PC register.</p>
+</div>
+</section>
+<section id="stupidly-simple-linker-script-ssls">
+<h2>Stupidly Simple Linker Script (SSLS)<a class="headerlink" href="#stupidly-simple-linker-script-ssls" title="Permalink to this heading"></a></h2>
+<p>As promised on the beginning, the first goal is to write ANYTHING that works. So let’s do this! The simplest linker script can consist of a single block called <em>SECTIONS</em>. This block contains all output sections that will written to the binary file. These sections are usually:</p>
+<dl class="field-list simple">
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">.text</span></code></dt>
+<dd class="field-odd"><p>The code.</p>
+</dd>
+<dt class="field-even"><code class="docutils literal notranslate"><span class="pre">.data</span></code></dt>
+<dd class="field-even"><p>Initialized data (global and static variables).</p>
+</dd>
+<dt class="field-odd"><code class="docutils literal notranslate"><span class="pre">.bss</span></code></dt>
+<dd class="field-odd"><p>Uninitialized data (global and static variables).</p>
+</dd>
+</dl>
+<p>For SSLS only the <code class="docutils literal notranslate"><span class="pre">.text</span></code> section is important. No data, no variables, just pure code. Without more talking, let’s create a file called <code class="docutils literal notranslate"><span class="pre">script.ld</span></code> and put something like this to it:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SECTIONS
+{
+    .text : { *(.text) }
+}
+</pre></div>
+</div>
+<p>The above script tells linker to:</p>
+<ol class="arabic simple">
+<li><p>Create a <code class="docutils literal notranslate"><span class="pre">.text</span></code> section (the leftmost expression).</p></li>
+<li><p>Take all <code class="docutils literal notranslate"><span class="pre">.text</span></code> sections from all object files (the expression in curly braces).</p></li>
+<li><p>Put them to the section created in step 1.</p></li>
+</ol>
+<p>That’s pretty simple, isn’t it? But there’s something missing here, even a few somethings. The code section is defined, that’s cool, but it’s not specified where it should be placed. In the current form, the code will be placed at address <code class="docutils literal notranslate"><span class="pre">0x00000000</span></code>, but it should be loaded at address <code class="docutils literal notranslate"><span class="pre">0x08000000</span></code>, according to the previous findings. Let’s fix that.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SECTIONS
+{
+    . = 0x08000000;
+    .text : { *(.text) }
+}
+</pre></div>
+</div>
+<p>The dot symbol in linker scripts is a location counter. It starts from <code class="docutils literal notranslate"><span class="pre">0x00000000</span></code> and can be modified either directly, as in the example above, or indirectly by adding sections, constants etc. The location counter value, when read after the output section <code class="docutils literal notranslate"><span class="pre">.text</span></code>, would be <code class="docutils literal notranslate"><span class="pre">0x08000000</span></code> plus the size of the <code class="docutils literal notranslate"><span class="pre">.txt</span></code> section. If address of an output section is not set explicitly (described later), the address is set from the current value of the location counter.</p>
+<p>The code is at valid location now, but MCU needs to know about that. As mentioned in the <a class="reference internal" href="#prepare-knowledge">Prepare knowledge</a> section, MCU reads first 4 bytes to know the top of the stack, and another 4 bytes to know where to begin the execution, and the execution usually begins with the <code class="docutils literal notranslate"><span class="pre">main</span></code> function.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ENTRY(main);
+
+SECTIONS
+{
+    . = 0x08000000;
+    LONG(0x20005000);
+    LONG(main | 1);
+    .text : { *(.text) }
+}
+</pre></div>
+</div>
+<p>The first entry after the location counter instructs linker to place a raw 4-byte value in the output binary. Why this value in particular? SRAM starts at <code class="docutils literal notranslate"><span class="pre">0x20000000</span></code>, STM32 has 20 kB (<code class="docutils literal notranslate"><span class="pre">0x5000</span></code>) of SRAM memory, <code class="docutils literal notranslate"><span class="pre">0x20000000</span> <span class="pre">+</span> <span class="pre">0x5000</span> <span class="pre">=</span> <span class="pre">0x20005000</span></code>.</p>
+<p>Similarly, an address of the <code class="docutils literal notranslate"><span class="pre">main</span></code> function is put to the binary file. But why it’s or’ed with <code class="docutils literal notranslate"><span class="pre">1</span></code>? Here comes the magic of ARM. In ARM architecture, odd function address tells CPU to switch to Thumb mode on branch to this address, as opposed to even addresses, denoting ARM mode. Not all branch instructions cause the mode to switch. <code class="docutils literal notranslate"><span class="pre">B</span></code> or <code class="docutils literal notranslate"><span class="pre">BL</span></code> instruction branches without switching the mode; <code class="docutils literal notranslate"><span class="pre">BX</span></code> branches with additional mode switch accordingly to the last bit of the address; <code class="docutils literal notranslate"><span class="pre">BLX</span></code> branches and always switches the mode. More information can be found on the <a class="reference external" href="https://developer.arm.com/documentation/dui0802/a/Cihfddaf">ARM Branch instruction</a> <a class="footnote-reference brackets" href="#id6" id="id7">3</a> page.</p>
+<p><em>STM32F103RBT6</em> is based on Cortex-M3 which supports only Thumb instructions, this why it is told on the beginning to switch to Thumb mode. This is normally transparent to a developer, compiler either uses <code class="docutils literal notranslate"><span class="pre">BL</span></code> instruction to keep the current mode, or changes the calling addresses automatically. The reason why it has to be done manually here is because the linker script is “stupidly simple”. This will become clearer after upgrading SSLS to SLS (simple linker script).</p>
+<p>I also added another new thing: <code class="docutils literal notranslate"><span class="pre">ENTRY(main)</span></code>. This tells linker what symbol should be used as the entry point of the program. This prevents <code class="docutils literal notranslate"><span class="pre">.text</span></code> section containing the main function from being optimized away by linker.</p>
+<p>The SSLS is ready, so the last step is to create a very simply program for Nucleo-F103RB. Let’s blink an LED.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;registers.h&quot;</span><span class="cp"></span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="linenos"> 4</span><span class="w">    </span><span class="n">RCC</span><span class="o">-&gt;</span><span class="n">APB2ENR</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">RCC_APB2ENR_IOPAEN</span><span class="p">);</span><span class="w"></span>
+<span class="linenos"> 5</span><span class="w">    </span><span class="n">GPIOA</span><span class="o">-&gt;</span><span class="n">CRL</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="p">(</span><span class="mb">0b10</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">GPIOA_CRL_MODE5</span><span class="p">);</span><span class="w"></span>
+<span class="linenos"> 6</span><span class="w">    </span><span class="n">GPIOA</span><span class="o">-&gt;</span><span class="n">CRL</span><span class="w"> </span><span class="o">&amp;=</span><span class="w"> </span><span class="o">~</span><span class="p">(</span><span class="mb">0b11</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">GPIOA_CRL_CNF5</span><span class="p">);</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="n">GPIOA</span><span class="o">-&gt;</span><span class="n">BSRR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span><span class="w"></span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="linenos">10</span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The mysterious <code class="docutils literal notranslate"><span class="pre">registers.h</span></code> file is a helper header containing addresses of registers. I’ve created it from information found in the reference manual. Why not? Since I’m handcrafting a linker script, I can handcraft this too. I simply defined a structure per group of registers, and then defined a pointer to the structure using the base address. Thanks to structures, I don’t need to perform manual pointer arithmetic, because it’s done automagically when accessing a field of a structure.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#ifndef LINKER_TUTORIAL_REGISTERS_H</span>
+<span class="linenos"> 2</span><span class="cp">#define LINKER_TUTORIAL_REGISTERS_H</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span><span class="cp"></span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">CR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">CFGR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">CIR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">10</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">APB2RSTR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">11</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">APB1RSTR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">12</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">AHBENR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">13</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">APB2ENR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">14</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">APB1ENR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">15</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">BDCR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">16</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">CSR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">17</span><span class="p">}</span><span class="w"> </span><span class="n">RCC_Reg</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">18</span>
+<span class="linenos">19</span><span class="cp">#define RCC ((RCC_Reg*) 0x40021000)</span>
+<span class="linenos">20</span><span class="cp">#define RCC_APB2ENR_IOPAEN 2</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="linenos">23</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">CRL</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">24</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">CRH</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">25</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">IDR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">26</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">ODR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">27</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">BSRR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">28</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">BRR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">29</span><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">LCKR</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">30</span><span class="p">}</span><span class="w"> </span><span class="n">GPIOA_Reg</span><span class="p">;</span><span class="w"></span>
+<span class="linenos">31</span>
+<span class="linenos">32</span><span class="cp">#define GPIOA ((GPIOA_Reg*) 0x40010800)</span>
+<span class="linenos">33</span><span class="cp">#define GPIOA_CRL_MODE5 20</span>
+<span class="linenos">34</span><span class="cp">#define GPIOA_CRL_CNF5 22</span>
+<span class="linenos">35</span>
+<span class="linenos">36</span><span class="cp">#endif </span><span class="c1">//LINKER_TUTORIAL_REGISTERS_H</span>
+</pre></div>
+</div>
+<p>Since the clock source is not configured, STM32 will use internal 8 MHz RC oscillator, and that’s more than sufficient for this simple project. Let’s compile and link it:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ arm-none-eabi-gcc \
+-mcpu=cortex-m3 \
+-mthumb \
+-Tscript.ld \
+-Wl,--gc-sections \
+-Os \
+main.c
+</pre></div>
+</div>
+<p>If everything went good, the firmware file will be created as <code class="docutils literal notranslate"><span class="pre">a.out</span></code>. This file is in ELF format and can’t be used directly to flash the microcontroller, instead it must be converted to Intel HEX format. This can be easily done with the following command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>arm-none-eabi-objcopy -O ihex a.out fw.hex
+</pre></div>
+</div>
+<p>Before loading <em>fw.hex</em> to the device with ST-Link or OpenOCD, let’s take a few minutes to analyze its content. Start with the two first lines:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>: 02 0000 04 0800 F2
+: 08 0000 00 0050002011000008 71
+</pre></div>
+</div>
+<p>The first is a <em>04</em> record (Extended Linear Address), that means it sets the base address for consecutive <em>00</em> records, <code class="docutils literal notranslate"><span class="pre">0800</span></code> in this case. It looks familiar, especially when extended to 32 bits (that’s how <em>04</em> records work): <code class="docutils literal notranslate"><span class="pre">0x08000000</span></code>. It’s the address of the flash memory!</p>
+<p>The next record’s type is <em>00</em>, that means data. This is exactly what will be loaded to the microcontroller. This particular line instructs the device programmer to flash 8 bytes at previously set address plus <code class="docutils literal notranslate"><span class="pre">0x0000</span></code> offset. Let me translate the payload from little endian to big endian: <code class="docutils literal notranslate"><span class="pre">20005000</span> <span class="pre">08000011</span></code>. Nice! This is top of RAM followed by the entry point! Let’s execute one more command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>arm-none-eabi-objdump -D a.out
+</pre></div>
+</div>
+<p>On the top of the output, there should be something similar to this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>08000010 &lt;main&gt;:
+08000010: 4a07    ldr r2, [pc, #28] ; (8000030 &lt;main+0x20&gt;)
+</pre></div>
+</div>
+<p>The main function is actually at address <code class="docutils literal notranslate"><span class="pre">08000010</span></code>, but it has been or’ed with <code class="docutils literal notranslate"><span class="pre">1</span></code> to produce odd result. The physical placement of the function didn’t change at all, it’s only how calls are made.</p>
+<p>The code compiles, stack pointer and entry point addresses are at valid locations, everything looks promising. Flash it baby! It worked perfectly on my board, the green LED lit up as it was supposed to.</p>
+<section id="limitations">
+<h3>Limitations<a class="headerlink" href="#limitations" title="Permalink to this heading"></a></h3>
+<p>The linker script is undoubtedly working, and it can be even used with simple projects. But, there’s a one caveat to be aware of: it’s impossible to modify global variables. The script lacks <code class="docutils literal notranslate"><span class="pre">.data</span></code> section, thus the linker will put all globals right after <code class="docutils literal notranslate"><span class="pre">.text</span></code> section in a flash memory. As a consequence, they are readable, but not writable. It’s clearly visible on the object dump of the binary:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Disassembly of section .data:
+
+08000058 &lt;a&gt;:
+08000058:   deadbeef        cdple   14, 10, cr11, cr13, cr15, {7}
+</pre></div>
+</div>
+<p>To achieve this effect, I created a global variable: <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">a</span> <span class="pre">=</span> <span class="pre">0xDEADBEEF</span></code>, and then compiled/linked the code again. By looking at the address, I can tell the variable has been put into the flash memory, so it effectively became read only.</p>
+<p>It doesn’t mean the variables can’t be used in the code. This issue affects only global variables, but local variables are placed on the stack, so as long as only them are used, this linker script will work for such projects.</p>
+</section>
+</section>
+<section id="simple-linker-script-sls">
+<h2>Simple Linker Script (SLS)<a class="headerlink" href="#simple-linker-script-sls" title="Permalink to this heading"></a></h2>
+<p>SSLS was meant to be just an example that linker script doesn’t have to be complicated to do its primary job. In this section I’m going to describe a Simple Linker Script that truly can be used in projects, without giving up on basic language functionalities (like global variables).</p>
+<section id="memory-block">
+<h3>MEMORY block<a class="headerlink" href="#memory-block" title="Permalink to this heading"></a></h3>
+<p>In the previous example a so-called <em>location counter</em> was used to set the starting address of <code class="docutils literal notranslate"><span class="pre">.text</span></code> section. It’s a sufficient approach for simple scripts, but it will quickly become a complete mess as more memory regions starts appearing in the linker script.</p>
+<p>In a linker script there can be one, and only one block named <strong>MEMORY</strong>. This block should contain all memory regions relevant to the device and the project. The regions don’t need to reflect microcontroller’s memory layout exactly, however they are strongly correlated. The memory block is only for the developer and for the linker, it doesn’t affect the target device in any way.</p>
+<p>Let’s define some basic regions that surely exist on a microcontroller:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MEMORY
+{
+    flash   (RX) : ORIGIN = 0x08000000, LENGTH = 128K
+    sram    (RW) : ORIGIN = 0x20000000, LENGTH = 20K
+}
+
+ENTRY(main);
+
+SECTIONS
+{
+    . = 0x08000000;
+    LONG(0x20005000);
+    LONG(main | 1);
+    .text : { *(.text) }
+}
+</pre></div>
+</div>
+<p>The syntax of entries in the memory block is self-explanatory.</p>
+<ul class="simple">
+<li><p>The first column is a name of a region, it can be virtually anything.</p></li>
+<li><p>The second column is a desired access, for flash memory it’s <em>Read</em> and <em>eXecute</em>, for SRAM: <em>Read</em> and <em>Write</em>.</p></li>
+<li><p>The third column contains a start address of the region.</p></li>
+<li><p>The last column sets the maximum size of the region; this prevents from putting too much data into it. Linker will raise an error if it detects a memory overflow.</p></li>
+</ul>
+<p>The regions can be placed and named freely. There can be, for example, two flash regions: <em>flash_1</em> starting from address <code class="docutils literal notranslate"><span class="pre">0x08000000</span></code> and <em>flash_2</em> at <code class="docutils literal notranslate"><span class="pre">0x08001000</span></code>. Why? This could be due to various reasons, maybe there’s a requirement to put a part of the code at a specific address.</p>
+<p>And now it’s time to reorganize the script a little:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MEMORY {
+    flash   (RX) : ORIGIN = 0x08000000, LENGTH = 128K
+    sram    (RW) : ORIGIN = 0x20000000, LENGTH = 20K
+}
+
+ENTRY(main);
+
+SECTIONS
+{
+    .text :
+    {
+        LONG(0x20005000);
+        LONG(main | 1);
+        *(.text)
+    } &gt; flash
+}
+</pre></div>
+</div>
+<p>Here’s a list of things I’ve done:</p>
+<ul class="simple">
+<li><p>Removed the direct location counter manipulation. Since the memory regions were introduced, it’s no longer needed to set it manually.</p></li>
+<li><p>Moved the stack pointer and entry point values to the <code class="docutils literal notranslate"><span class="pre">.text</span></code> section.</p></li>
+<li><p>Told linker to put the <code class="docutils literal notranslate"><span class="pre">.text</span></code> section into the <em>flash</em> memory region.</p></li>
+</ul>
+<p>Let’s add one more output section. One of the drawbacks of SSLS was that it put global variables into the flash memory, because linker was not aware of other memory regions.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MEMORY {
+    flash   (RX) : ORIGIN = 0x08000000, LENGTH = 128K
+    sram    (RW) : ORIGIN = 0x20000000, LENGTH = 20K
+}
+
+ENTRY(main);
+
+SECTIONS
+{
+    .text :
+    {
+        LONG(0x20005000);
+        LONG(main | 1);
+        *(.text)
+    } &gt; flash
+
+    .data :
+    {
+        *(.data)
+    } &gt; sram
+}
+</pre></div>
+</div>
+<p>The newly added output section <code class="docutils literal notranslate"><span class="pre">.data</span></code> will include all <code class="docutils literal notranslate"><span class="pre">.data</span></code> sections from all object files, then the output section will be placed inside an SRAM memory. Compile, link and dump the object file to see what has changed</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Disassembly of section .data:
+
+20000000 &lt;a&gt;:
+20000000:   deadbeef        cdple   14, 10, cr11, cr13, cr15, {7}
+</pre></div>
+</div>
+<p>That looks good! This time the global variable is in the SRAM memory, so it is writable. Let’s also take a look at the last few lines of the HEX file</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>:02 0000 04 2000 DA
+:04 0000 00 EFBEADDE C4
+</pre></div>
+</div>
+<p>The first record tells the device programmer to set the programming address to <code class="docutils literal notranslate"><span class="pre">0x20000000</span></code> and the next line tells it to write <code class="docutils literal notranslate"><span class="pre">0xDEADBEEF</span></code> in it. That looks go… Wait a minute! What it is trying to do is to flash data to SRAM, and that’s not possible. Even if you could, everything will vanish at the first reset of the device.</p>
+<p>Here comes the limitation of Simple Linker Script: global variables are writable, but they won’t have their initial values when microcontroller starts.</p>
+</section>
+<section id="what-about-uninitialized-variables">
+<h3>What about uninitialized variables?<a class="headerlink" href="#what-about-uninitialized-variables" title="Permalink to this heading"></a></h3>
+<p>Global variables which were declared but not defined at the same time will end up in a <code class="docutils literal notranslate"><span class="pre">.bss</span></code> section. Such section wasn’t defined in the linker script yet, but linker is smarter than me, and placed it right after the <code class="docutils literal notranslate"><span class="pre">.data</span></code> section, exactly where it should be. And here comes the second (and last) limitation of Simple Linker Script: uninitialized global variables won’t be zeroed by default. Well, this is annoying but still tolerable.</p>
+</section>
+</section>
+<section id="linker-script-ls">
+<h2>Linker Script (LS)<a class="headerlink" href="#linker-script-ls" title="Permalink to this heading"></a></h2>
+<p>It’s time to write something that works in every aspect. The goal is to have a robust linker script which initialises variables with their predefined values, and zeroes those uninitialised.</p>
+<p>Let’s sum up what’s missing:</p>
+<ul class="simple">
+<li><p>proper entry point and stack definitions,</p></li>
+<li><p>interrupt vectors,</p></li>
+<li><p>data initialisation.</p></li>
+</ul>
+<section id="entry-point-and-stack-definitions">
+<h3>Entry point and stack definitions<a class="headerlink" href="#entry-point-and-stack-definitions" title="Permalink to this heading"></a></h3>
+<p>The addresses of entry point and the stack pointer were set directly in the linker script. This works fine but address of the entry point had to be ored so MCU knows that the function under this address uses Thumb instructions. This shouldn’t be done manually, at least I didn’t see such thing being done in any linker script.</p>
+<p>Just out of curiosity, below the <cite>main</cite> function I’ve added a global variable pointing to the main method:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">main_ptr</span><span class="p">)(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">main</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Now I compiled it and did the object dump. This is how the <code class="docutils literal notranslate"><span class="pre">.data</span></code> section looks like now:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Disassembly of section .data:
+
+20000000 &lt;main_ptr&gt;:
+20000000:   08000009        stmdaeq r0, {r0, r3}
+</pre></div>
+</div>
+<p>And the actual address of <code class="docutils literal notranslate"><span class="pre">main</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>08000008 &lt;main&gt;
+</pre></div>
+</div>
+<p>This looks promising. Apparently it’s enough to create a pointer to a function, to get its address with the Thumb modifier. The last thing to do is to put this modified address on the beginning of the binary, and say bye-bye to manual bit manipulation. This can be done obviously by using a linker script with a little help of code. Somewhere below the main function, I’ve added the following lines:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">prologue</span><span class="p">[])</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="n">__attribute__</span><span class="p">((</span><span class="n">section</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;.prologue&quot;</span><span class="p">)))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="kt">void</span><span class="p">))</span><span class="w"> </span><span class="mh">0x20005000</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">main</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+</div>
+<p>I feel obliged to explain each part of it.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">(*prologue[])</span> <span class="pre">(void)</span></code></dt><dd><p>This is a declaration of an array of pointers to functions which take nothing and return nothing.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">__attribute__</span></code></dt><dd><p>This is a special keyword for specifying additional properties of functions, variables, structures etc.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">section</span> <span class="pre">(&quot;.prologue&quot;)</span></code></dt><dd><p>This is a parameter to <code class="docutils literal notranslate"><span class="pre">__attribute__</span></code> which tells the compiler to put the related symbol (array in this case) into the section with the given name.</p>
+</dd>
+</dl>
+<p>Putting it together: define an array of pointers to void functions and put it to the <code class="docutils literal notranslate"><span class="pre">.prologue</span></code> section, initializing it with two items – the first is the initial stack pointer and the second is the address of the <code class="docutils literal notranslate"><span class="pre">main</span></code> function.</p>
+<p>And now, let’s force linker to put this tiny section on the beginning of the flash memory.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MEMORY {
+    flash   (RX) : ORIGIN = 0x08000000, LENGTH = 128K
+    sram    (RW) : ORIGIN = 0x20000000, LENGTH = 20K
+}
+
+ENTRY(main);
+
+SECTIONS
+{
+    .text :
+    {
+        KEEP(*(.prologue));
+        *(.text)
+    } &gt; flash
+
+    .data :
+    {
+        *(.data)
+    } &gt; sram
+}
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">KEEP()</span></code> function tells linker to exclude the supplied section from the garbage collection process. Linker would do that because the <code class="docutils literal notranslate"><span class="pre">prologue</span></code> array is not referenced anywhere in the code, so linker assumes it’s unused.</p>
+<p>As usual, let’s to the object dump of the binary:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Disassembly of section .text:
+
+08000000 &lt;prologue&gt;:
+8000000:    20005000        andcs   r5, r0, r0
+8000004:    08000009        stmdaeq r0, {r0, r3}
+
+08000008 &lt;main&gt;:
+</pre></div>
+</div>
+<p>It looks exactly as it should!</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This article is still in progress. It lacks description how to zero <code class="docutils literal notranslate"><span class="pre">.bss</span></code> section and set up interrupt vectors.</p>
+</div>
+<hr class="docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p><a class="reference external" href="https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads">https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads</a></p>
+</dd>
+<dt class="label" id="id3"><span class="brackets">2</span><span class="fn-backref">(<a href="#id4">1</a>,<a href="#id5">2</a>)</span></dt>
+<dd><p><a class="reference external" href="https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf">https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf</a></p>
+</dd>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id7">3</a></span></dt>
+<dd><p><a class="reference external" href="https://developer.arm.com/documentation/dui0802/a/Cihfddaf">https://developer.arm.com/documentation/dui0802/a/Cihfddaf</a></p>
+</dd>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id9">4</a></span></dt>
+<dd><p><a class="reference external" href="https://allthingsembedded.com/post/2020-04-11-mastering-the-gnu-linker-script/">https://allthingsembedded.com/post/2020-04-11-mastering-the-gnu-linker-script/</a></p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../arbitrary-data-in-binary/arbitrary-data-in-binary.html" class="btn btn-neutral float-left" title="Put arbitrary data into binary" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../nrf-cmsis/nrf-cmsis.html" class="btn btn-neutral float-right" title="nRF52840 with CMSIS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Itachi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7S93SGB655"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-7S93SGB655', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

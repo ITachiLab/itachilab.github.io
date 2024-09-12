@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lenovo, Bluetooth and Windows 8.1 &mdash; ITachi Lab Docs</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="canonical" href="https://itachi.pl/lenovo-bluetooth/lenovo-bluetooth.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Remote Desktop - Error 0x204" href="../0x204/0x204.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../lacrosse-tx3/lacrosse-tx3.html">Lacrosse TX3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../brainfuck-assembler/brainfuck-assembler.html">Brainfuck Assembler (BFA)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Raspberry Pi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../initramfs-pi/initramfs-pi.html">Raspberry Pi running from initramfs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../u-boot-on-raspberry/u-boot-on-raspberry.html">U-Boot on Raspberry</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Embedded</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../arbitrary-data-in-binary/arbitrary-data-in-binary.html">Put arbitrary data into binary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linker-script/linker-script.html">Linker Script from scratch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nrf-cmsis/nrf-cmsis.html">nRF52840 with CMSIS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Windows</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../robocopy/robocopy.html">Robocopy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0x204/0x204.html">Remote Desktop - Error 0x204</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lenovo, Bluetooth and Windows 8.1</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-analysis">Quick analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bluedentist">Bluedentist</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Itachi Lab Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Lenovo, Bluetooth and Windows 8.1</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/lenovo-bluetooth/lenovo-bluetooth.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lenovo-bluetooth-and-windows-8-1">
+<h1>Lenovo, Bluetooth and Windows 8.1<a class="headerlink" href="#lenovo-bluetooth-and-windows-8-1" title="Permalink to this heading"></a></h1>
+<p>Let’s talk about Lenovo. In Lenovo, when they manufacture a notebook with a Bluetooth feature, they don’t allow people enable that feature on their computers. Not obviously of course, they just “forget” to put such option to their management app. “Oh come on, Itachi, Bluetooth isn’t such a big deal” - someone might say that 15 years ago while sending <strong>danzel_-_pump_it_up.mp3</strong> through IrDA for the 5th time. But now, it is really convenient to have Bluetooth. Okay, I have it, but I can’t use it. Why? Ask Lenovo.</p>
+<p>Some time ago I tried to install Bluetooth on my Lenovo Y580 notebook. It was enabled in BIOS, it’s been working on Windows 7 before, but when I tried to install drivers under freshly installed (and even genuine) Windows 8.1, this stubborn piece of software was absolutely convinced the device doesn’t exist. Really? Well, the Bluetooth chip inside my laptop must have been an Illuminati’s plot. I remembered that Bluetooth needed to be enabled in Lenovo Energy Management on Windows 7, but on it’s younger brother I found nothing related to Bluetooth; but, hey, I can now “remove dust” from my fan!</p>
+<p>I Googled my issue and finally stumbled upon a workaround that proposed installation of Lenovo Energy Management for Windows 7. I tried that, Windows 8.1 broke into tears because the application wasn’t compatible with it, but it worked, I could enable Bluetooth now. Since I was not fully satisfied with such workaround, I reverted the appropriate version of LEM (yay, dust cleaning!), and started thinking.</p>
+<p>Lenovo’s developers are not exceptionally smart, but they thankfully follow the most well known paradigm: developers are lazy. Though the both versions of Lenovo Energy Management differ in UI, they still use the same DLL to perform device oriented calls. This is convenient, instead of creating a whole different application for each OS, create one lib with functions and simply replace the UI part. Software developers - 1, UI designers - 0.</p>
+<p>The DLL that is a core part of my solution was located under the Lenovo Energy Management directory and was named: <strong>LenovoEmExpandedAPI</strong>. It has “API” suffix, I like that. Let’s check what functions it exports (oh boy, I’m excited like 9 year old on Christmas). To do that I used a handy program called <a class="reference external" href="http://www.nirsoft.net/utils/dll_export_viewer.html">DLL Export Viewer</a>.</p>
+<img alt="../_images/dll_exports.jpg" class="align-center" src="../_images/dll_exports.jpg" />
+<p>Jackpot! Let see, what could possibly help me… Ah… There it is! <code class="docutils literal notranslate"><span class="pre">SetBluetooth</span></code>! This couldn’t be more obvious. Although I can’t peek (not directly) what arguments that function takes, developers, even the ones from Lenovo, think similarly, so the “set” function probably takes a single argument which is a <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>. Okay, but how to quickly check that? A small program that loads this DLL and calls that function should do the trick. When the question contains: “quickly” and “code” then the answer is: Python.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span>
+<span class="n">lib</span> <span class="o">=</span> <span class="n">cdll</span><span class="o">.</span><span class="n">LoadLibrary</span><span class="p">(</span><span class="s1">&#39;LenovoEmExpandedAPI&#39;</span><span class="p">)</span>
+<span class="n">lib</span><span class="o">.</span><span class="n">SetBluetooth</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Yup, it’s that simple. After executing these 3 simple lines in Python’s REPL I could use Bluetooth again. Magic!</p>
+<section id="quick-analysis">
+<h2>Quick analysis<a class="headerlink" href="#quick-analysis" title="Permalink to this heading"></a></h2>
+<p>Since I managed to walk that far, why don’t have some fun? For example, let’s read the Bluetooth state, there’s a dedicated function for that: <code class="docutils literal notranslate"><span class="pre">GetBluetoothStatus</span></code>. If I try the same trick with Python as before, the only thing that will be returned is disappointment. Instead of the expected status, I was getting just <code class="docutils literal notranslate"><span class="pre">0</span></code>, irrespectively of the actual Bluetooth status. It looked like this was rather a return code, so the Bluetooth status must have been returned in some other way, for example through the argument passed to the function. In order to be 100% sure, I decompiled the DLL and found the function’s implementation:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">signed</span><span class="w"> </span><span class="kr">__int64</span><span class="w"> </span><span class="nf">GetBluetoothStatus</span><span class="p">(</span><span class="n">_DWORD</span><span class="w"> </span><span class="o">*</span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">_DWORD</span><span class="w"> </span><span class="o">*</span><span class="n">v2</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">v3</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">signed</span><span class="w"> </span><span class="kr">__int64</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">HANDLE</span><span class="w"> </span><span class="n">v5</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">v6</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">v7</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">_BYTE</span><span class="w"> </span><span class="o">*</span><span class="n">v8</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">BOOL</span><span class="w"> </span><span class="n">v9</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">DWORD</span><span class="w"> </span><span class="n">BytesReturned</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">v2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a1</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">v3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a2</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">FindWindowW</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;EnergyCut_Window&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="n">i64</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">v5</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CreateFileW</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;</span><span class="se">\\\\</span><span class="s">.</span><span class="se">\\</span><span class="s">EnergyDrv&quot;</span><span class="p">,</span><span class="w"> </span><span class="mh">0xC0000000</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="n">i64</span><span class="p">,</span><span class="w"> </span><span class="mi">2u</span><span class="p">,</span><span class="w"> </span><span class="mh">0x80u</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="n">i64</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">v5</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="n">HANDLE</span><span class="p">)</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">v3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">sub_180001390</span><span class="p">(</span><span class="s">&quot;EM Driver Create Failed.GetBluetoothStatus</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">      </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4372</span><span class="n">i64</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="n">v6</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">operator</span><span class="w"> </span><span class="n">new</span><span class="p">(</span><span class="mh">0xCu</span><span class="n">i64</span><span class="p">);</span><span class="w"></span>
+<span class="w">      </span><span class="o">*</span><span class="p">((</span><span class="n">_DWORD</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">v6</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="o">*</span><span class="p">(</span><span class="n">_DWORD</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">v6</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="n">v7</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v6</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="n">v8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">v6</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="n">BytesReturned</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="n">v9</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DeviceIoControl</span><span class="p">(</span><span class="n">v5</span><span class="p">,</span><span class="w"> </span><span class="mh">0x831020C4</span><span class="p">,</span><span class="w"> </span><span class="n">v6</span><span class="p">,</span><span class="w"> </span><span class="mi">4u</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">v6</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="o">*</span><span class="p">((</span><span class="n">_DWORD</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">v6</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BytesReturned</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="n">i64</span><span class="p">);</span><span class="w"></span>
+<span class="w">      </span><span class="n">CloseHandle</span><span class="p">(</span><span class="n">v5</span><span class="p">);</span><span class="w"></span>
+<span class="w">      </span><span class="o">*</span><span class="n">v2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v9</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">*</span><span class="n">v8</span><span class="p">;</span><span class="w"></span>
+<span class="w">      </span><span class="n">operator</span><span class="w"> </span><span class="n">delete</span><span class="p">(</span><span class="n">v7</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">      </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="n">i64</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4377</span><span class="n">i64</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Yep, I was right, the <code class="docutils literal notranslate"><span class="pre">0</span></code> I was getting is just a return code saying that the command executed successfully. The real Bluetooth state is a return value of <code class="docutils literal notranslate"><span class="pre">DeviceIoControl</span></code> function. The result is then stored in a dword pointed by the first argument of <code class="docutils literal notranslate"><span class="pre">GetBlueoothStatus</span></code> function. The second argument looks like a verbosity flag, and the function <code class="docutils literal notranslate"><span class="pre">sub_180001390</span></code> must be some kind of logger.</p>
+<p>So, now I’m finally ready to get the Bluetooth status. I’m going to use Python again:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ret_val</span> <span class="o">=</span> <span class="n">c_int</span><span class="p">()</span>
+<span class="n">lib</span><span class="o">.</span><span class="n">GetBluetoothStatus</span><span class="p">(</span><span class="n">byref</span><span class="p">(</span><span class="n">ret_val</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ret_val</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">c_int()</span></code> creates a C-like integer variable, and then it’s passed by its address to the <code class="docutils literal notranslate"><span class="pre">GetBluetoothStatus</span></code> function. After running this code, I can see the current Bluetooth state.</p>
+</section>
+<section id="bluedentist">
+<h2>Bluedentist<a class="headerlink" href="#bluedentist" title="Permalink to this heading"></a></h2>
+<p>I prepared a tiny program called <strong>Bluedentist</strong> (~180 KB) that can be used to turn the Bluetooth on or off. It’s just a small window with two radio buttons that does the job.</p>
+<img alt="../_images/bluedentist.jpg" class="align-center" src="../_images/bluedentist.jpg" />
+<p>Binary releases can be found on my <a class="reference external" href="https://github.com/ITachiLab/bluedentist/releases">GitHub</a>, as well as the <a class="reference external" href="https://github.com/ITachiLab/bluedentist">source code</a>.  Before using Bludentist make sure that Lenovo Energy Management is installed, and OS architecture is the same a Bluedentist’s.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../0x204/0x204.html" class="btn btn-neutral float-left" title="Remote Desktop - Error 0x204" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Itachi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7S93SGB655"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-7S93SGB655', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

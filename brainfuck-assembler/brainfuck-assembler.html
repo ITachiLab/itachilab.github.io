@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brainfuck Assembler (BFA) &mdash; ITachi Lab Docs</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="canonical" href="https://itachi.pl/brainfuck-assembler/brainfuck-assembler.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Raspberry Pi running from initramfs" href="../initramfs-pi/initramfs-pi.html" />
+    <link rel="prev" title="Lacrosse TX3" href="../lacrosse-tx3/lacrosse-tx3.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../lacrosse-tx3/lacrosse-tx3.html">Lacrosse TX3</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Brainfuck Assembler (BFA)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hands-on">Hands on</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#brainfuck-primitive-architecture-bpa">Brainfuck Primitive Architecture (BPA)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#syntax-and-reference">Syntax and reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simple-arithmetic">Simple arithmetic</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#manipulating-a-variable-on-the-stack">Manipulating a variable on the stack</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#stack-operations">Stack operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#popping-from-the-stack">Popping from the stack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pushing-r0-onto-the-stack">Pushing r0 onto the stack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pushing-constant-onto-the-stack">Pushing constant onto the stack</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#copying-moving-operations">Copying (moving) operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#copying-memory-to-r0">Copying memory to r0</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#copying-r0-to-memory">Copying r0 to memory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#copying-constant-to-memory">Copying constant to memory</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#control-flow">Control flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-variables">Using variables</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Raspberry Pi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../initramfs-pi/initramfs-pi.html">Raspberry Pi running from initramfs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../u-boot-on-raspberry/u-boot-on-raspberry.html">U-Boot on Raspberry</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Embedded</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../arbitrary-data-in-binary/arbitrary-data-in-binary.html">Put arbitrary data into binary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linker-script/linker-script.html">Linker Script from scratch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nrf-cmsis/nrf-cmsis.html">nRF52840 with CMSIS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Windows</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../robocopy/robocopy.html">Robocopy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0x204/0x204.html">Remote Desktop - Error 0x204</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lenovo-bluetooth/lenovo-bluetooth.html">Lenovo, Bluetooth and Windows 8.1</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Itachi Lab Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Brainfuck Assembler (BFA)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/brainfuck-assembler/brainfuck-assembler.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="brainfuck-assembler-bfa">
+<h1>Brainfuck Assembler (BFA)<a class="headerlink" href="#brainfuck-assembler-bfa" title="Permalink to this heading"></a></h1>
+<p>I believe most of the readers have heard about <em>Brainfuck</em> programming language. This language serves two main purposes:</p>
+<ul class="simple">
+<li><p>it’s indeed a programming language,</p></li>
+<li><p>fucks a brain.</p></li>
+</ul>
+<p>Sounds like it does exactly what the name suggests. Let’s consider this “Hello World” example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>++++++++[&gt;++++[&gt;++&gt;+++&gt;+++&gt;+&lt;&lt;&lt;&lt;-]&gt;+&gt;+&gt;-&gt;&gt;+[&lt;]&lt;-]&gt;&gt;.&gt;---.+++++++..+++.&gt;&gt;.&lt;-.&lt;.+++.------.--------.&gt;&gt;+.&gt;++.
+</pre></div>
+</div>
+<p>Looks ugly and, what’s worse, it works somehow. For those who doesn’t believe, I really encourage to try this out in the <a class="reference external" href="https://www.nayuki.io/page/brainfuck-interpreter-javascript">Brainfuck online interpreter</a> <a class="footnote-reference brackets" href="#id1" id="id2">1</a>, which should be kept opened anyway in a new tab as it will come in handy for the duration of this article.</p>
+<p>Brainfuck is based on a bunch of primitive machine commands, which are apparently sufficient to make Brainfuck a Turing complete language. In other words: despite causing a permanent brain damage, Brainfuck can be used to write fully fledged applications (theoretically).</p>
+<p>For obvious reasons - DRY, laziness, me being me - I’m not going to describe how Brainfuck actually works, everything is nicely explained on <a class="reference external" href="https://en.wikipedia.org/wiki/Brainfuck">Brainfuck Wikipedia</a> <a class="footnote-reference brackets" href="#id3" id="id4">2</a>. The goal of this article is different: create high level assembler for Brainfuck. Why? For fun of course!</p>
+<section id="hands-on">
+<h2>Hands on<a class="headerlink" href="#hands-on" title="Permalink to this heading"></a></h2>
+<p>“High level assembler” - sounds ridiculous, it is ridiculous, but look at that: if treat Brainfuck as a machine code, then Brainfuck’s interpreter can be considered a platform providing a memory and very limited CPU that understands Brainfuck’s Machine Code. On this memory a stack can be constructed, and a single CPU register can be emulated (only one, keeping more of them will be burdensome).</p>
+</section>
+<section id="brainfuck-primitive-architecture-bpa">
+<h2>Brainfuck Primitive Architecture (BPA)<a class="headerlink" href="#brainfuck-primitive-architecture-bpa" title="Permalink to this heading"></a></h2>
+<p>The assumptions of BPA are as follows:</p>
+<dl class="simple">
+<dt>Memory</dt><dd><p>Starts at <code class="docutils literal notranslate"><span class="pre">0x0</span></code> and is limited only by interpreter’s implementation.</p>
+</dd>
+<dt>Stack</dt><dd><p>Top of the stack is initially set to -1, meaning that it’s an invalid operation to read from the stack if there’s nothing on it. Every push operation first increases the stack pointer (SP) and then writes the data. SP is always equal to the <em>current interpreter’s data pointer - 1.</em></p>
+</dd>
+<dt>Register “r0”</dt><dd><p>This is the only register. It always lives under the current interpreter’s data pointer, meaning that it is a part of the memory. Due to this, care must be taken when pushing new thins onto the stack as they can possibly overwrite precious data in r0.</p>
+</dd>
+<dt>Forced flow of operations</dt><dd><p>BPA’s CPU instruction pointer can’t be modified manually.</p>
+</dd>
+</dl>
+<p>Probably the most painful part will be maintaining the stack and the r0 register. Although the concept of the stack is entirely virtual and optional, having it in our toolbox will make writing codes in BPA ASM way easier than without it.</p>
+</section>
+<section id="syntax-and-reference">
+<h2>Syntax and reference<a class="headerlink" href="#syntax-and-reference" title="Permalink to this heading"></a></h2>
+<p>Before we start describing the instruction set, let’s define a bunch of simple keywords used in the following section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">r0</dt>
+<dd class="field-odd"><p>The only register we have.</p>
+</dd>
+<dt class="field-even">&lt;con&gt;</dt>
+<dd class="field-even"><p>Any 8-bit constant value.</p>
+</dd>
+<dt class="field-odd">&lt;mem&gt;</dt>
+<dd class="field-odd"><p>A location in memory. This can be either a variable (<code class="docutils literal notranslate"><span class="pre">$example</span></code>) or a stack pointer (<code class="docutils literal notranslate"><span class="pre">$sp</span></code>). An additional offset can be added or subtracted (<code class="docutils literal notranslate"><span class="pre">$example</span> <span class="pre">-</span> <span class="pre">5</span></code>).</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">$sp</span></code> is a built-in variable that always points to the top of the stack. Declaring a variable with the same name will lead to an error.</p>
+</div>
+<section id="simple-arithmetic">
+<h3>Simple arithmetic<a class="headerlink" href="#simple-arithmetic" title="Permalink to this heading"></a></h3>
+<p>Simple arithmetical operations like addition or subtraction can be effortlessly constructed using the Brainfuck’s increment and decrement commands.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 33%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Machine Code</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inc</span> <span class="pre">r0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">+</span></code></p></td>
+<td><p>Increase value of r0 register.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dec</span> <span class="pre">r0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-</span></code></p></td>
+<td><p>Decrease value of r0 register.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">add</span> <span class="pre">r0,</span> <span class="pre">&lt;con&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">+</span></code> repeated <em>con</em> times.</p></td>
+<td><p>Increase value of r0 register by a constant value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sub</span> <span class="pre">r0,</span> <span class="pre">&lt;con&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-</span></code> repeated <em>con</em> times.</p></td>
+<td><p>Decrease value of r0 register by a constant value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inc</span> <span class="pre">[&lt;mem&gt;]</span></code></p></td>
+<td colspan="2"><p>Increase value of a variable on the stack.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dec</span> <span class="pre">[&lt;mem&gt;]</span></code></p></td>
+<td colspan="2"><p>Decrease value of a variable on the stack.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">add</span> <span class="pre">[&lt;mem&gt;],</span> <span class="pre">&lt;con&gt;</span></code></p></td>
+<td colspan="2"><p>Increase value of a variable on the stack by a constant value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sub</span> <span class="pre">[&lt;mem&gt;],</span> <span class="pre">&lt;con&gt;</span></code></p></td>
+<td colspan="2"><p>Decrease value of a variable on the stack by a constant value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">zero</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[-]</span></code></p></td>
+<td><p>Zeroes the <em>r0</em> register.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">zero</span> <span class="pre">[&lt;mem&gt;]</span></code></p></td>
+<td colspan="2"><p>Zeroes a variable on the stack.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="manipulating-a-variable-on-the-stack">
+<h4>Manipulating a variable on the stack<a class="headerlink" href="#manipulating-a-variable-on-the-stack" title="Permalink to this heading"></a></h4>
+<p>Operations involving manipulation of variables on the stack are pretty similar. All of them consist of three steps:</p>
+<ol class="arabic simple">
+<li><p>set the data pointer at the desired memory location,</p></li>
+<li><p>perform arithmetic operation,</p></li>
+<li><p>go back to the original memory location.</p></li>
+</ol>
+<p>The first step is always a bunch of <code class="docutils literal notranslate"><span class="pre">&lt;</span></code> operations, depending on what memory location has been chosen. The second step is the arithmetic operation. The last step is an exact reverse of the first.</p>
+<p>Let’s say a <em>foo</em> variable is located at 3rd memory cell and the current data pointer is at 6th. The instruction: <code class="docutils literal notranslate"><span class="pre">inc</span> <span class="pre">[$foo]</span></code> will be assembled to:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&lt;&lt;&lt; + &gt;&gt;&gt;
+</pre></div>
+</div>
+<p>All other arithmetic operations are analogical:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>&lt;&lt;&lt; - &gt;&gt;&gt;
+<span class="linenos">2</span>&lt;&lt;&lt; +++ &gt;&gt;&gt;
+<span class="linenos">3</span>&lt;&lt;&lt; ---- &gt;&gt;&gt;
+<span class="linenos">4</span>&lt;&lt;&lt; [-] &gt;&gt;&gt;
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dec</span> <span class="pre">[$foo]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add</span> <span class="pre">[$foo],</span> <span class="pre">3</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sub</span> <span class="pre">[$foo],</span> <span class="pre">4</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">zero</span> <span class="pre">[$foo]</span></code></p></li>
+</ol>
+</section>
+</section>
+<section id="stack-operations">
+<h3>Stack operations<a class="headerlink" href="#stack-operations" title="Permalink to this heading"></a></h3>
+<p>This section requires a little more in-depth look than the simple arithmetics. When memory operations are involved, we are responsible for maintaining its consistency.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 72%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Machine Code</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pop</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&lt;</span></code></p></td>
+<td><p>Popping from the stack.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">push</span> <span class="pre">r0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">+&gt;[-]&gt;[-]&lt;&lt;[-&gt;+&gt;+&lt;&lt;]&gt;&gt;[-&lt;&lt;+&gt;&gt;]&lt;+</span></code> or <code class="docutils literal notranslate"><span class="pre">&gt;</span></code></p></td>
+<td><p>Pushing onto the stack.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">push</span> <span class="pre">&lt;con&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">+&gt;[-]&lt;[-&gt;+&lt;]+</span></code>, then repeat <code class="docutils literal notranslate"><span class="pre">+</span></code> <em>con</em> times, then <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>; or sometimes: <code class="docutils literal notranslate"><span class="pre">[-]</span></code>, then repeat <code class="docutils literal notranslate"><span class="pre">+</span></code> <em>con</em> times, then <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>.</p></td>
+<td><p>Pushing constant onto the stack.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="popping-from-the-stack">
+<h4>Popping from the stack<a class="headerlink" href="#popping-from-the-stack" title="Permalink to this heading"></a></h4>
+<p>This is the shortest operation that does much.Its purpose is to get the value from the top of the stack and move it to the r0 register. Since the r0 register lives in the memory and is exactly one memory cell right to the top of the stack, the data pointer can be simply decreased, so the r0 register contains the previous stack’s top.</p>
+</section>
+<section id="pushing-r0-onto-the-stack">
+<h4>Pushing r0 onto the stack<a class="headerlink" href="#pushing-r0-onto-the-stack" title="Permalink to this heading"></a></h4>
+<p>And here it is – the first more complex instruction. Its purpose is to put the register r0 onto the stack, while keeping the value in the register. Sounds simple, but involves lots of copying and copying isn’t simple in Brainfuck. Let’s divide and conquer this task.</p>
+<p>The first thing we have to take care of is to move r0 to the next memory cell, because the current will become a new stack’s top. In Brainfuck we can’t just copy values between cells, but we can smartly loop decrease and increase operations. Copying is just using the current cell value as a loop condition, and increasing another cell by one on each loop iteration. Copying the current cell to the next will look like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[-&gt;+&lt;]
+</pre></div>
+</div>
+<p>This tells Brainfuck to enter the loop if the current cell’s value is not zero, then decrease the current cell’s value, go to the next cell, increase its value, go to the source cell and go back to the loop’s start. This will work, but has two caveats:</p>
+<ul class="simple">
+<li><p>it won’t copy, it will move the source value, because the source value is used as a loop counter;</p></li>
+<li><p>the target cell must be zero.</p></li>
+</ul>
+<p>To tackle the first problem, we have to introduce a temporary memory cell which will be increased along with the target cell. After we move the value from source to target, the temporary cell will be used to restore the source cell’s value. This also means that only the target cell must be zero, but the temporary cell too.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt;           ; Go to the target cell.
+[-]         ; Zero it.
+&gt;           ; Go to the temporary cell.
+[-]         ; Zero it.
+&lt;&lt;          ; Go back to the source cell.
+[-&gt;+&gt;+&lt;&lt;]   ; Until zero, decrease the source cell&#39;s value, go to the target cell, increase it, go to the temporary cell, increase it, and go back to the source cell.
+&gt;&gt;          ; Go to the temporary cell.
+[-&lt;&lt;+&gt;&gt;]    ; Until zero, decrease the temporary cell&#39;s value, go to the source cell, increase it, go to the temporary cell.
+</pre></div>
+</div>
+<p>When the above sequence finishes, the source and the target cell will have the same value. To complete the whole operation for our purposes, the data pointer must be decreased to point at the new r0 position, thus the final form will be:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt;[-]&gt;[-]&lt;&lt;[-&gt;+&gt;+&lt;&lt;]&gt;&gt;[-&lt;&lt;+&gt;&gt;]&lt;
+</pre></div>
+</div>
+<section id="possible-optimization">
+<h5>Possible optimization<a class="headerlink" href="#possible-optimization" title="Permalink to this heading"></a></h5>
+<p>In some circumstances, the push operation can be significantly optimized. Consider the following pair of instructions:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>push   r0
+mov    r0, 15
+</pre></div>
+</div>
+<p>(We didn’t talk about <code class="docutils literal notranslate"><span class="pre">mov</span></code> yet, but we will.)</p>
+<p>First, the r0 is pushed onto the stack, then r0 is being written a constant value. In such case, we don’t have to maintain the r0’s value, because it will be overwritten anyway, thus the whole copying thing can be omitted and the data pointer can be simply increased. As a consequence, the new stack’s top will be the old r0, and the new r0 will be some zero or random value that will be soon filled in with a data.</p>
+</section>
+</section>
+<section id="pushing-constant-onto-the-stack">
+<h4>Pushing constant onto the stack<a class="headerlink" href="#pushing-constant-onto-the-stack" title="Permalink to this heading"></a></h4>
+<p>This will be slightly simpler than pushing the register, because we don’t need to copy the r0 to two places then copy it again to the stack’s top.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt;           ; Go to the target cell.
+[-]         ; Zero it.
+&lt;           ; Go to the source cell.
+[-&gt;+&lt;]      ; Until zero, decrease the source cell, go to the target cell, increase it, and go to the source cell.
++++...      ; Increase the source cell as many times as needed to achieve the desired value.
+&gt;           ; Set the data pointer to the new r0 (target cell).
+</pre></div>
+</div>
+<p>And again, in some circumstances, the above operations can be optimized:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[-]         ; Zero the source cell.
++++...      ; Increase the source cell as many times as needed to achieve the desired value.
+&gt;           ; Set the data pointer to the new r0 (target cell).
+</pre></div>
+</div>
+<p>This is possible only if r0 is to be written with some value, but the old value won’t be used in the meantime.</p>
+</section>
+</section>
+<section id="copying-moving-operations">
+<h3>Copying (moving) operations<a class="headerlink" href="#copying-moving-operations" title="Permalink to this heading"></a></h3>
+<p>We’ve already discussed copying values between cells, but these were rather side effects of other instructions. In this section we are going to do some intentional copying.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 31%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Machine Code</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mov</span> <span class="pre">r0,</span> <span class="pre">&lt;con&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[-]</span></code>, then <code class="docutils literal notranslate"><span class="pre">+</span></code> repeated <em>con</em> times.</p></td>
+<td><p>Zero r0 register and increase its value until the desired is reached.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mov</span> <span class="pre">r0,</span> <span class="pre">[&lt;mem&gt;]</span></code></p></td>
+<td colspan="2"><p>Copying memory to <code class="docutils literal notranslate"><span class="pre">r0</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mov</span> <span class="pre">[&lt;mem&gt;],</span> <span class="pre">r0</span></code></p></td>
+<td colspan="2"><p>Copying <code class="docutils literal notranslate"><span class="pre">r0</span></code> to memory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mov</span> <span class="pre">[&lt;mem&gt;],</span> <span class="pre">&lt;con&gt;</span></code></p></td>
+<td colspan="2"><p>Copying constant to memory.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="copying-memory-to-r0">
+<h4>Copying memory to r0<a class="headerlink" href="#copying-memory-to-r0" title="Permalink to this heading"></a></h4>
+<p>This is another kind of instruction that requires using a temporary cell to back up the source data. Suppose we’d like to execute the following instruction: <cite>mov r0, [$sp - 3]</cite>. Then, the following set of Brainfuck commands shall be executed:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>[-]
+<span class="linenos">2</span>&gt;
+<span class="linenos">3</span>[-]
+<span class="linenos">4</span>&lt;&lt;&lt;&lt;&lt;
+<span class="linenos">5</span>[-&gt;&gt;&gt;&gt;+&gt;+&lt;&lt;&lt;&lt;&lt;]
+<span class="linenos">6</span>&gt;&gt;&gt;&gt;&gt;
+<span class="linenos">7</span>[-&lt;&lt;&lt;&lt;&lt;+&gt;&gt;&gt;&gt;&gt;&gt;]
+<span class="linenos">8</span>&lt;
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Zero r0 register.</p></li>
+<li><p>Go to the temporary cell.</p></li>
+<li><p>Zero the temporary cell.</p></li>
+<li><p>Go to the source cell.</p></li>
+<li><p>Repeat the loop until the source cell is zero. In each loop iteration: decrease the source cell, go to the r0 register, increase it, go to the temp cell and also increase it. Before repeating the loop, go back to the source cell.</p></li>
+<li><p>Go to the temp cell.</p></li>
+<li><p>Repeat the loop until the temporary cell is zero. In each loop iteration: decrease the temporary cell value, go to the source cell, increase it and go back to the temporary cell. Repeat the loop.</p></li>
+<li><p>Set the data pointer at r0 register.</p></li>
+</ol>
+<p>The only variable parts are the ones moving the data pointer back and forth to reach the source cell. The number of these moves depends only on the selected source cell. The rest of the code is constant.</p>
+</section>
+<section id="copying-r0-to-memory">
+<h4>Copying r0 to memory<a class="headerlink" href="#copying-r0-to-memory" title="Permalink to this heading"></a></h4>
+<p>Suppose we’d like to execute the following instruction: <code class="docutils literal notranslate"><span class="pre">mov</span> <span class="pre">[$sp</span> <span class="pre">-</span> <span class="pre">1],</span> <span class="pre">r0</span></code>. Then, the following set of Brainfuck commands shall be executed:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>&lt;&lt;
+<span class="linenos">2</span>[-]
+<span class="linenos">3</span>&gt;&gt;&gt;
+<span class="linenos">4</span>[-]
+<span class="linenos">5</span>&lt;
+<span class="linenos">6</span>[-&lt;&lt;+&gt;&gt;]
+<span class="linenos">7</span>&gt;
+<span class="linenos">8</span>[-&lt;+&gt;]
+<span class="linenos">9</span>&lt;
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Go to the target cell.</p></li>
+<li><p>Zero it.</p></li>
+<li><p>Go to the temporary cell.</p></li>
+<li><p>Zero it too.</p></li>
+<li><p>Go to the source cell (r0)</p></li>
+<li><p>Repeat the loop until the source cell is zero.In each loop iteration: decrease the r0, go to the target cell, increase it and go back to the source cell.</p></li>
+<li><p>Go to the temporary cell.</p></li>
+<li><p>Repeat the loop until the temporary cell is zero.In each loop iteration: decrease the temporary cell, go to the source cell, increase it and go back to the temporary cell.</p></li>
+<li><p>Set the data pointer at r0 register.</p></li>
+</ol>
+</section>
+<section id="copying-constant-to-memory">
+<h4>Copying constant to memory<a class="headerlink" href="#copying-constant-to-memory" title="Permalink to this heading"></a></h4>
+<p>Copying a constant value to the memory is significantly simpler operation than the previous ones because it is free of the back up-restore overhead. The operation consists of exactly four simple steps. Consider this instruction: <code class="docutils literal notranslate"><span class="pre">mov</span> <span class="pre">[$foo</span> <span class="pre">-</span> <span class="pre">5],</span> <span class="pre">10</span></code>, which will be assembled to:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+<span class="linenos">2</span>[-]
+<span class="linenos">3</span>++++++++++
+<span class="linenos">4</span>&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Assuming the <code class="docutils literal notranslate"><span class="pre">$foo</span></code> variable living in an 8th memory cell, and the current data pointer being 10, the data pointer has to be moved to the left by <code class="docutils literal notranslate"><span class="pre">(10</span> <span class="pre">-</span> <span class="pre">8)</span> <span class="pre">+</span> <span class="pre">5</span> <span class="pre">=</span> <span class="pre">7</span></code>.</p></li>
+<li><p>The target memory cell must be zeroed.</p></li>
+<li><p>Increase the memory by 10.</p></li>
+<li><p>Restore the data pointer.</p></li>
+</ol>
+</section>
+</section>
+<section id="control-flow">
+<h3>Control flow<a class="headerlink" href="#control-flow" title="Permalink to this heading"></a></h3>
+<p>In Brainfuck you have only one method of controlling the execution flow: a simple loop, which is an equivalent of C’s <em>while</em>; we’ve used that quite a lot in the previous sections. This simple loop is also the only way of mimicking conditional statements, since in Brainfuck there’s no such thing as “if/else”.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 13%" />
+<col style="width: 62%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Instruction</p></th>
+<th class="head"><p>Machine Code</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ifnz</span></code> &lt;ins1, ins2, … insN&gt; <code class="docutils literal notranslate"><span class="pre">repeat</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[</span></code> … <code class="docutils literal notranslate"><span class="pre">]</span></code></p></td>
+<td><p>If value in register r0 is not zero, then execute instructions contained between <code class="docutils literal notranslate"><span class="pre">ifnz</span></code> and its respective <code class="docutils literal notranslate"><span class="pre">repeat</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Unfortunately, we cannot control the instruction pointer, with a consequence being an inability to implement jump instructions. The code always executes from the top to the bottom, with a tiny exception for the mentioned loop.</p>
+</section>
+<section id="using-variables">
+<h3>Using variables<a class="headerlink" href="#using-variables" title="Permalink to this heading"></a></h3>
+<p>Test</p>
+<hr class="docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id1"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p><a class="reference external" href="https://www.nayuki.io/page/brainfuck-interpreter-javascript">https://www.nayuki.io/page/brainfuck-interpreter-javascript</a></p>
+</dd>
+<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
+<dd><p><a class="reference external" href="https://en.wikipedia.org/wiki/Brainfuck">https://en.wikipedia.org/wiki/Brainfuck</a></p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../lacrosse-tx3/lacrosse-tx3.html" class="btn btn-neutral float-left" title="Lacrosse TX3" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../initramfs-pi/initramfs-pi.html" class="btn btn-neutral float-right" title="Raspberry Pi running from initramfs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Itachi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7S93SGB655"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-7S93SGB655', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

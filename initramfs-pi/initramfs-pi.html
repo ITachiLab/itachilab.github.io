@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raspberry Pi running from initramfs &mdash; ITachi Lab Docs</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="canonical" href="https://itachi.pl/initramfs-pi/initramfs-pi.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="U-Boot on Raspberry" href="../u-boot-on-raspberry/u-boot-on-raspberry.html" />
+    <link rel="prev" title="Brainfuck Assembler (BFA)" href="../brainfuck-assembler/brainfuck-assembler.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../lacrosse-tx3/lacrosse-tx3.html">Lacrosse TX3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../brainfuck-assembler/brainfuck-assembler.html">Brainfuck Assembler (BFA)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Raspberry Pi</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Raspberry Pi running from initramfs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#flight-plan">Flight plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup-a-development-environment">Setup a development environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#for-building-the-kernel">For building the Kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#for-building-other-stuff">For building other stuff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#directory-structure">Directory structure</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#prepare-raspberry-pi">Prepare Raspberry Pi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#changes-in-config-txt">Changes in config.txt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#changes-in-cmdline-txt">Changes in cmdline.txt</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#minimalist-kernel">Minimalist Kernel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#minimalist-initramfs">Minimalist initramfs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prepare-a-configuration-file">Prepare a configuration file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prepare-a-simple-initial-program">Prepare a simple initial program</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#select-cpio-configuration-file-as-the-initramfs-source">Select CPIO configuration file as the initramfs source</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#build-and-run-kernel">Build and run Kernel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#busybox">BusyBox</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#get-sources">Get sources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configure-features">Configure features</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../u-boot-on-raspberry/u-boot-on-raspberry.html">U-Boot on Raspberry</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Embedded</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../arbitrary-data-in-binary/arbitrary-data-in-binary.html">Put arbitrary data into binary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linker-script/linker-script.html">Linker Script from scratch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nrf-cmsis/nrf-cmsis.html">nRF52840 with CMSIS</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Windows</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../robocopy/robocopy.html">Robocopy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0x204/0x204.html">Remote Desktop - Error 0x204</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lenovo-bluetooth/lenovo-bluetooth.html">Lenovo, Bluetooth and Windows 8.1</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Itachi Lab Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Raspberry Pi running from initramfs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/initramfs-pi/initramfs-pi.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="raspberry-pi-running-from-initramfs">
+<h1>Raspberry Pi running from initramfs<a class="headerlink" href="#raspberry-pi-running-from-initramfs" title="Permalink to this heading"></a></h1>
+<p>In this article we are going to do really cool stuff (as always, aren’t we?). How about having a really small Kernel for Raspberry that runs entirely from its initial RAM file system, and doesn’t even need an SD card once it’s up? An example application could be some metering IoT platform that only reads data from a bunch of I2C or SPI devices and sends that to the cloud. When you build device like this, you really don’t need all this fancy stuff shipped with Raspbian. In fact, you only need a bunch of drivers and binaries. All of that is small enough to fit in RAM and still leave lots of space for running programs.</p>
+<section id="flight-plan">
+<h2>Flight plan<a class="headerlink" href="#flight-plan" title="Permalink to this heading"></a></h2>
+<p>This article will be lengthy, I’m not gonna lie. Here’s a short list of long things we are going to do:</p>
+<div class="topic">
+<p class="topic-title">Setup a development environment</p>
+<p>It’s rather obvious we need some build tools. This time we are going to use two different toolchains – one for building the Kernel, and second for building other stuff that will run under this kernel.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Using different toolchain for building the Linux apps might be relevant only for Raspberries powered by ARMv6 chips (like mine Raspberry Pi Zero W). I didn’t test that, but if you have Raspberry with ARMv7, you might want to try using the same toolchain for the apps.</p>
+</div>
+</div>
+<div class="topic">
+<p class="topic-title">Prepare Raspberry Pi</p>
+<p>In order to run our custom Kernel, we have to change a couple of things on the <cite>boot</cite> partition.</p>
+</div>
+<div class="topic">
+<p class="topic-title">Prepare a minimalist Kernel</p>
+<p>Depending on our needs, we can tailor the Kernel to only contain necessary modules. Media or HID drivers? Who needs that on the metering platform?!</p>
+</div>
+<div class="topic">
+<p class="topic-title">Build BusyBox</p>
+<p>When it comes to embedded devices, I mean, REAL embedded devices, BusyBox is your best friend. It contains all the tools you need to setup a simple CLI for managing your platform.</p>
+</div>
+<div class="topic">
+<p class="topic-title">Prepare an initial RAM file system (initramfs)</p>
+<p>This will be the hardest part. Kernel is one thing, but the root file system is a completely different story. <code class="docutils literal notranslate"><span class="pre">/dev</span></code>, <code class="docutils literal notranslate"><span class="pre">/etc</span></code> or <code class="docutils literal notranslate"><span class="pre">/lib</span></code> aren’t going to magically appear. The responsibility of creating these and other directories lays on you, sorry.</p>
+</div>
+<p>Sounds like we have a plan. Shall we start?</p>
+</section>
+<section id="setup-a-development-environment">
+<h2>Setup a development environment<a class="headerlink" href="#setup-a-development-environment" title="Permalink to this heading"></a></h2>
+<section id="for-building-the-kernel">
+<h3>For building the Kernel<a class="headerlink" href="#for-building-the-kernel" title="Permalink to this heading"></a></h3>
+<p>Let’s start with obtaining the stuff we actually want to compile, the most important of course will be <a class="reference external" href="https://github.com/raspberrypi/linux">Raspbian</a> <a class="footnote-reference brackets" href="#id2" id="id3">1</a>. The following command will clone only the head branch and only the tip of it; we don’t need the whole history:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git clone --depth 1 --single-branch https://github.com/raspberrypi/linux.git
+</pre></div>
+</div>
+<p>When it comes to compiling the Kernel, it’s beautifully described in the <a class="reference external" href="https://www.raspberrypi.com/documentation/computers/linux_kernel.html.">Kernel documentation</a> <a class="footnote-reference brackets" href="#id4" id="id5">2</a>. It’s not that hard, really. First, you need to install a bunch of tools:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt install git bc bison flex libssl-dev make libc6-dev libncurses5-dev
+</pre></div>
+</div>
+<p>After that, you have to decide what cross toolchain you need. The choice depends on Raspberry version you are targeting. For this article I’m going to use <em>Raspberry Pi Zero W</em>, so the proper toolchain is the one targeting 32-bit platforms.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt install crossbuild-essential-armhf
+</pre></div>
+</div>
+<p>For 64-bit Pies the command doesn’t differ much:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sudo apt install crossbuild-essential-arm64
+</pre></div>
+</div>
+</section>
+<section id="for-building-other-stuff">
+<h3>For building other stuff<a class="headerlink" href="#for-building-other-stuff" title="Permalink to this heading"></a></h3>
+<p>As mentioned earlier, this step might be relevant only for ARMv6 Raspberries. If you have one, you need another toolchain for building the Linux apps that will run under your custom Kernel. Thankfully, there’s a place where you can download precompiled toolchains, so you don’t have to create them on your own: <a class="reference external" href="https://sourceforge.net/projects/raspberry-pi-cross-compilers/files/Raspberry%20Pi%20GCC%20Cross-Compiler%20Toolchains/">Raspberry cross-compilers</a> <a class="footnote-reference brackets" href="#id6" id="id7">3</a>.</p>
+<p>At the time of writing this article, the newest Raspbian is based on Debian 11 (Bullseye), so enter the directory with that name. Next, you have to choose a GCC version. Take the newest, and in case of troubles, you can try other versions later. The last step is selecting the proper Raspberry (I’m choosing  <em>Raspberry Pi 1, Zero</em> here). That’s it! You can now download the toolchain, extract it, and keep somewhere until we need it.</p>
+</section>
+<section id="directory-structure">
+<h3>Directory structure<a class="headerlink" href="#directory-structure" title="Permalink to this heading"></a></h3>
+<p>I like keeping all related stuff together, so I organized my workspace as follows:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pi-workspace/
+├─ linux/
+├─ initramfs/
+│  ├─ initramfs.cpio-config
+│  ├─ content/
+├─ cross-pi/
+├─ extra/
+│  ├─ busybox/
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">linux</dt>
+<dd class="field-odd"><p>Directory with Raspbian repo.</p>
+</dd>
+<dt class="field-even">initramfs.cpio-config</dt>
+<dd class="field-even"><p>Configuration file for the script which will create a CPIO archive with initramfs contents.</p>
+</dd>
+<dt class="field-odd">content</dt>
+<dd class="field-odd"><p>The actual content of initramfs. It will be used together with the configuration file.</p>
+</dd>
+<dt class="field-even">cross-pi</dt>
+<dd class="field-even"><p>Cross toolchain for building stuff other than Kernel.</p>
+</dd>
+<dt class="field-odd">extra</dt>
+<dd class="field-odd"><p>Extra tools and software, BusyBox is an example here.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="prepare-raspberry-pi">
+<h2>Prepare Raspberry Pi<a class="headerlink" href="#prepare-raspberry-pi" title="Permalink to this heading"></a></h2>
+<p>We start from downloading the Raspbian Lite image and writing it onto an SD card. Use any method you like, it doesn’t matter. Once it’s done, we have to tweak a few things.</p>
+<section id="changes-in-config-txt">
+<h3>Changes in config.txt<a class="headerlink" href="#changes-in-config-txt" title="Permalink to this heading"></a></h3>
+<p>At the end of the file, add the following lines:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>kernel=zImage
+enable_uart=1
+</pre></div>
+</div>
+<p>The first line sets Kernel file name to <code class="docutils literal notranslate"><span class="pre">zImage</span></code>. This file doesn’t exist yet, we are going to create it soon. The second line enables serial console. This will be the preferred and only way of communicating with Raspberry directly.</p>
+</section>
+<section id="changes-in-cmdline-txt">
+<h3>Changes in cmdline.txt<a class="headerlink" href="#changes-in-cmdline-txt" title="Permalink to this heading"></a></h3>
+<p>While modifying <code class="docutils literal notranslate"><span class="pre">config.txt</span></code> isn’t anything extraordinary, <code class="docutils literal notranslate"><span class="pre">cmdline.txt</span></code> is rarely touched. This file contains parameters that will be passed to Kernel when it’s booting. It’s like passing command line arguments to programs.</p>
+<p>The default cmdline has lots of stuff we don’t need. These are:</p>
+<dl class="field-list simple">
+<dt class="field-odd">root</dt>
+<dd class="field-odd"><p>This is a parameter that points to the device with a root file system. Since we are building Raspberry that runs entirely from initramfs, this will be the root file system.</p>
+</dd>
+<dt class="field-even">rootfstype</dt>
+<dd class="field-even"><p>A type of the file system of the root device. Since we are not using any root device, this can be safely removed.</p>
+</dd>
+<dt class="field-odd">fsck.repair</dt>
+<dd class="field-odd"><p>Controls fsck behavior. Again, we are not planning to use any file system, so this can be removed too.</p>
+</dd>
+<dt class="field-even">rootwait</dt>
+<dd class="field-even"><p>Makes Kernel wait for the root device to be available. Not needed too.</p>
+</dd>
+<dt class="field-odd">quiet</dt>
+<dd class="field-odd"><p>Suppresses Kernel messages while booting. When working with our hand-crafted Linux from scratch you indeed want to see Kernel messages.</p>
+</dd>
+<dt class="field-even">init</dt>
+<dd class="field-even"><p>Selects the initial program to run when Kernel is booting. If this is removed, Kernel will try to find <code class="docutils literal notranslate"><span class="pre">init</span></code> program in the root directory of initramfs and this is exactly what we want.</p>
+</dd>
+<dt class="field-odd">console=tty1</dt>
+<dd class="field-odd"><p>Remove only this, the second occurrence of <code class="docutils literal notranslate"><span class="pre">console</span></code>. The purpose of this option is widely described on the page dedicated to <a class="reference external" href="https://www.kernel.org/doc/html/v4.17/admin-guide/serial-console.html">Kernel serial console</a> <a class="footnote-reference brackets" href="#id8" id="id9">4</a>. Shortly speaking: leaving only the first <code class="docutils literal notranslate"><span class="pre">console</span></code> setting will result in both Kernel messages and anything written to <code class="docutils literal notranslate"><span class="pre">/dev/console</span></code> being sent through Raspberry’s UART. Until we equip our tiny Linux with something that can manage TTYs (like BusyBox), this is the only way of sending program output to UART.</p>
+</dd>
+</dl>
+<p>After all this cleaning, it looks like the only stuff we need in the command line is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>console=serial0,115200
+</pre></div>
+</div>
+</section>
+</section>
+<section id="minimalist-kernel">
+<h2>Minimalist Kernel<a class="headerlink" href="#minimalist-kernel" title="Permalink to this heading"></a></h2>
+<p>The fun part begins – we are going to configure the Kernel. The best choice is to start with the default config for Raspberry and then tailor that to your needs. It’s easier to work on something that can be booted out of the box, then proceed with removing unused stuff, than to spent the rest of your life wondering why your Kernel doesn’t boot.</p>
+<p>Without much talking, navigate your console to the directory with Raspbian and execute the following commands:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>KERNEL=kernel
+make bcmrpi_defconfig
+</pre></div>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>The defconfig for your Raspberry might be different, there’s a page that describes <a class="reference external" href="https://www.raspberrypi.com/documentation/computers/linux_kernel.html#kernel-configuration">Raspberry Kernel configuration</a> <a class="footnote-reference brackets" href="#id10" id="id11">5</a>, it also points out what default configuration is suitable for each Raspberry.  The one I’m using here is suitable for Raspberry 1, Zero, Zero W and Compute Module 1.</p>
+</div>
+<p>When the default config is ready, you can proceed with a more detailed configuration through <cite>menuconfig</cite>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- menuconfig
+</pre></div>
+</div>
+<p>Or, for 64-bit Kernels:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig
+</pre></div>
+</div>
+<p>I spent a good hour or two removing unnecessary modules, in order to make Kernel small, you can find my <code class="docutils literal notranslate"><span class="pre">.config</span></code> xref:attachment$kernel.config[in attachments]. In general, I did the following:</p>
+<ul class="simple">
+<li><p>disabled modules subsystem, so everything is built into the Kernel binary;</p></li>
+<li><p>disabled drivers for stuff I will never use, like: HID, media, graphics, amateur radio, wired network and many more;</p></li>
+<li><p>removed support for file systems.</p></li>
+</ul>
+</section>
+<section id="minimalist-initramfs">
+<h2>Minimalist initramfs<a class="headerlink" href="#minimalist-initramfs" title="Permalink to this heading"></a></h2>
+<p>Though Kernel can boot without any initramfs on board, and we could just proceed with building the Kernel image now, but wouldn’t it be cool to run a simple initial program, and see everything working before we begin with more advanced topics? I bet it would, and it isn’t that hard.</p>
+<p>Before you continue with this article, I really recommend getting known with <a class="reference external" href="https://landley.net/writing/rootfs-howto.html">Rootfs how-to</a> <a class="footnote-reference brackets" href="#id12" id="id13">6</a>, author explains initramfs, its purpose and gives a bunch of useful hints for beginners. Trust me, you won’t regret a single minute spent on this article.</p>
+<section id="prepare-a-configuration-file">
+<h3>Prepare a configuration file<a class="headerlink" href="#prepare-a-configuration-file" title="Permalink to this heading"></a></h3>
+<p>To create our initramfs, we will use the approach based on a configuration file. This gives the most flexibility and makes doing any changes way more easier than manipulating files in a directory (especially when it comes to changing permissions and creating device nodes).</p>
+<p>Our first configuration file is going to be super simple. It will contain just three lines, instructing the packaging script to put the initial program into the root of the initramfs and create <code class="docutils literal notranslate"><span class="pre">/dev/console</span></code> device.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>dir /dev 755 0 0 &lt;1&gt;
+<span class="linenos">2</span>nod /dev/console 644 0 0 c 5 1 &lt;2&gt;
+<span class="linenos">3</span>file /init ../initramfs/content/init 755 0 0 &lt;3&gt;
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">/dev</span></code> directory.</p></li>
+<li><p>Create a character device <code class="docutils literal notranslate"><span class="pre">/dev/console</span></code>. This step is required to write anything to the console from within the initial program.</p></li>
+<li><p>Copy <code class="docutils literal notranslate"><span class="pre">init</span></code> program from the given source path to the root of the initramfs. The source path is relative to the directory the Kernel is built from. Here I assume the directory structure is the same as described on the beginning of the article. Permissions are typical for any executable.</p></li>
+</ol>
+<p>There’s only one small detail left – we don’t have any initial program available! Thankfully it can be as simple as “Hello, World!”.</p>
+</section>
+<section id="prepare-a-simple-initial-program">
+<h3>Prepare a simple initial program<a class="headerlink" href="#prepare-a-simple-initial-program" title="Permalink to this heading"></a></h3>
+<p>Create a new file <code class="docutils literal notranslate"><span class="pre">init.c</span></code> with the following content:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unistd.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hello, World!&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">sleep</span><span class="p">(</span><span class="mi">9999</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">sleep(9999)</span></code> at the end is needed to avoid ugly Kernel panics caused by initial program finishing its execution. When the initial program is started by Kernel, it is assigned PID 1. A program with this PID must not be terminated.</p>
+</div>
+<p>The initial program has to be compiled with an appropriate toolchain, as described <a class="reference internal" href="#for-building-other-stuff">on the beginning</a>. For my Raspberry Pi Zero W, I’m going to use the additional toolchain for ARMv6.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ export PATH=/home/fooser/pi-workspace/cross-pi/bin:$PATH
+$ arm-linux-gnueabihf-gcc -static -o init init.c
+</pre></div>
+</div>
+<p>In order to be sure that I’m using the correct toolchain, I prepended it to the PATH variable. I also checked the binary using <code class="docutils literal notranslate"><span class="pre">readelf</span></code> to see if the target architecture matches the Raspberry’s architecture.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ readelf -A init
+
+Attribute Section: aeabi
+File Attributes
+  Tag_CPU_name: &quot;6&quot;
+  Tag_CPU_arch: v6
+  Tag_ARM_ISA_use: Yes
+  Tag_THUMB_ISA_use: Thumb-1
+  Tag_FP_arch: VFPv2
+  Tag_ABI_PCS_wchar_t: 4
+  Tag_ABI_FP_rounding: Needed
+  Tag_ABI_FP_denormal: Needed
+  Tag_ABI_FP_exceptions: Needed
+  Tag_ABI_FP_number_model: IEEE 754
+  Tag_ABI_align_needed: 8-byte
+  Tag_ABI_align_preserved: 8-byte, except leaf SP
+  Tag_ABI_enum_size: int
+  Tag_ABI_VFP_args: VFP registers
+  Tag_CPU_unaligned_access: v6
+</pre></div>
+</div>
+<p>The last step is to move the compiled binary to the directory with initramfs contents.</p>
+</section>
+<section id="select-cpio-configuration-file-as-the-initramfs-source">
+<h3>Select CPIO configuration file as the initramfs source<a class="headerlink" href="#select-cpio-configuration-file-as-the-initramfs-source" title="Permalink to this heading"></a></h3>
+<p>While being in Kernel menuconfig, go to <em>General setup</em>, find <em>Initramfs source file(s)</em> and set the path to: <code class="docutils literal notranslate"><span class="pre">../initramfs/initramfs.cpio-config</span></code> (or other, if you organized your directory differently).</p>
+</section>
+</section>
+<section id="build-and-run-kernel">
+<h2>Build and run Kernel<a class="headerlink" href="#build-and-run-kernel" title="Permalink to this heading"></a></h2>
+<p>If everything is ready, it’s time to build the Kernel. Invoke the below command and go make yourself a coffee, the compilation process can take 15-20 minutes, depending on your machine and on a number of things you left enabled in Kernel config.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ make -j4 ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage
+</pre></div>
+</div>
+<p>When it’s done, the gzipped Kernel image can be found at <em>arch/arm/boot/zImage</em>. Copy this file to the <em>boot</em> partition of the SD card you’ve prepared earlier and try booting Raspberry from it. If you did everything properly, on the Raspberry’s serial output you should see Kernel messages appearing and finally a “Hello, World!” text.</p>
+<p>Congratulations, you’ve just created a valid initramfs, AND an initial program! It doesn’t do much, but we really do not want to make it do more. It’s not our task to write any sort of such stuff because we already have it covered by BusyBox.</p>
+</section>
+<section id="busybox">
+<h2>BusyBox<a class="headerlink" href="#busybox" title="Permalink to this heading"></a></h2>
+<p>BusyBox is a set of Linux utilities you need to have to survive in the Linux world, especially when this world is embedded. All commands you usually want to be available, like: <code class="docutils literal notranslate"><span class="pre">cat</span></code>, <code class="docutils literal notranslate"><span class="pre">ls</span></code>, <code class="docutils literal notranslate"><span class="pre">mv</span></code>, <code class="docutils literal notranslate"><span class="pre">ip</span></code> etc. are incorporated in BusyBox. Sure you can compile each of them manually and put to appropriate <code class="docutils literal notranslate"><span class="pre">/bin</span></code> or <code class="docutils literal notranslate"><span class="pre">/sbin</span></code> directory in initramfs, but this will take definitely too much time. BusyBox has all of that common commands out-of-the-box.</p>
+<p>Besides being a big pile of useful tools, BusyBox offers everything you would expect from a typical Linux shell. BusyBox will be your initial program and sign-in facility too. No surprise the authors call it: “<em>The Swiss Army knife of Embedded Linux</em>”.</p>
+<section id="get-sources">
+<h3>Get sources<a class="headerlink" href="#get-sources" title="Permalink to this heading"></a></h3>
+<p>The latest BusyBox sources can be downloaded from the <a class="reference external" href="https://www.busybox.net/downloads/">BusyBox</a> <a class="footnote-reference brackets" href="#id14" id="id15">7</a> official site. Download the desired package and extract it anywhere you want. In my case, I have it in <code class="docutils literal notranslate"><span class="pre">extra/busybox</span></code> directory inside the project workspace. And that’s all, the next step will be configuration of BusyBox’s features.</p>
+</section>
+<section id="configure-features">
+<h3>Configure features<a class="headerlink" href="#configure-features" title="Permalink to this heading"></a></h3>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Before you proceed, make sure a toolchain appropriate for building Linux apps is present in your PATH. This should be the same toolchain you used for the initial program earlier.</p>
+</div>
+<p>BusyBox can be configured in a similar manner we configured Kernel. You can start with one of the default configurations, and tailor it to your needs (that’s what I did). To list possible make targets, execute: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">help</span></code>. If you don’t care about BusyBox size, and you feel comfortable with having everything, you can go with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">defconfig</span></code> which will create the largest generic configuration.</p>
+<p>Whatever config you chose, there are still two small things you’d like to change in the configuration, so run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">menuconfig</span></code>, go to <em>Settings</em> and change the below options to suggested values:</p>
+<dl class="simple">
+<dt>Build static binary (no shared libs)</dt><dd><p>Mark that as enabled. Thanks to this, you will save some time on finding libraries required by BusyBox and copying them to initramfs.</p>
+</dd>
+<dt>Cross compiler prefix</dt><dd><p>Set that to: <code class="docutils literal notranslate"><span class="pre">arm-linux-gnueabihf-</span></code>.</p>
+</dd>
+</dl>
+<hr class="docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id3">1</a></span></dt>
+<dd><p><a class="reference external" href="https://github.com/raspberrypi/linux">https://github.com/raspberrypi/linux</a></p>
+</dd>
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id5">2</a></span></dt>
+<dd><p><a class="reference external" href="https://www.raspberrypi.com/documentation/computers/linux_kernel.html.">https://www.raspberrypi.com/documentation/computers/linux_kernel.html.</a></p>
+</dd>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id7">3</a></span></dt>
+<dd><p><a class="reference external" href="https://sourceforge.net/projects/raspberry-pi-cross-compilers/files/Raspberry%20Pi%20GCC%20Cross-Compiler%20Toolchains/">https://sourceforge.net/projects/raspberry-pi-cross-compilers/files/Raspberry%20Pi%20GCC%20Cross-Compiler%20Toolchains/</a></p>
+</dd>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id9">4</a></span></dt>
+<dd><p><a class="reference external" href="https://www.kernel.org/doc/html/v4.17/admin-guide/serial-console.html">https://www.kernel.org/doc/html/v4.17/admin-guide/serial-console.html</a></p>
+</dd>
+<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id11">5</a></span></dt>
+<dd><p><a class="reference external" href="https://www.raspberrypi.com/documentation/computers/linux_kernel.html#kernel-configuration">https://www.raspberrypi.com/documentation/computers/linux_kernel.html#kernel-configuration</a></p>
+</dd>
+<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id13">6</a></span></dt>
+<dd><p><a class="reference external" href="https://landley.net/writing/rootfs-howto.html">https://landley.net/writing/rootfs-howto.html</a></p>
+</dd>
+<dt class="label" id="id14"><span class="brackets"><a class="fn-backref" href="#id15">7</a></span></dt>
+<dd><p><a class="reference external" href="https://www.busybox.net/downloads/">https://www.busybox.net/downloads/</a></p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../brainfuck-assembler/brainfuck-assembler.html" class="btn btn-neutral float-left" title="Brainfuck Assembler (BFA)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../u-boot-on-raspberry/u-boot-on-raspberry.html" class="btn btn-neutral float-right" title="U-Boot on Raspberry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Itachi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7S93SGB655"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-7S93SGB655', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

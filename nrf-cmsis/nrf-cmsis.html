@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nRF52840 with CMSIS &mdash; ITachi Lab Docs</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="canonical" href="https://itachi.pl/nrf-cmsis/nrf-cmsis.html" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Robocopy" href="../robocopy/robocopy.html" />
+    <link rel="prev" title="Linker Script from scratch" href="../linker-script/linker-script.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html">
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">General</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../lacrosse-tx3/lacrosse-tx3.html">Lacrosse TX3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../brainfuck-assembler/brainfuck-assembler.html">Brainfuck Assembler (BFA)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Raspberry Pi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../initramfs-pi/initramfs-pi.html">Raspberry Pi running from initramfs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../u-boot-on-raspberry/u-boot-on-raspberry.html">U-Boot on Raspberry</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Embedded</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../arbitrary-data-in-binary/arbitrary-data-in-binary.html">Put arbitrary data into binary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linker-script/linker-script.html">Linker Script from scratch</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">nRF52840 with CMSIS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cmsis">CMSIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#project-files">Project files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#makefile">Makefile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#linker-script">Linker script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main-c">main.c</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#final-thoughts">Final thoughts</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Windows</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../robocopy/robocopy.html">Robocopy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../0x204/0x204.html">Remote Desktop - Error 0x204</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lenovo-bluetooth/lenovo-bluetooth.html">Lenovo, Bluetooth and Windows 8.1</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Itachi Lab Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">nRF52840 with CMSIS</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/nrf-cmsis/nrf-cmsis.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nrf52840-with-cmsis">
+<h1>nRF52840 with CMSIS<a class="headerlink" href="#nrf52840-with-cmsis" title="Permalink to this heading"></a></h1>
+<p><strong>nRF</strong> chips manufactured by Nordic Semiconductor are known for their versatility when it comes to radio communication. A single chip can handle various communication protocols happening at 2.4 GHz frequency, for example: Bluetooth or ZigBee. Probably no one is crazy enough to implement stacks of these protocols from scratch unless there are some exceptional requirements. That’s why it’s a common patten to either use <a class="reference external" href="https://www.nordicsemi.com/Products/Development-software/nrf5-sdk">nRF5 SDK</a> <a class="footnote-reference brackets" href="#id2" id="id3">1</a>, or more sexy recently <a class="reference external" href="https://www.nordicsemi.com/Products/Development-software/nrf-connect-sdk">nRF Connect SDK</a> <a class="footnote-reference brackets" href="#id4" id="id5">2</a> based on <a class="reference external" href="https://docs.zephyrproject.org/latest/index.html">Zephyr RTOS</a> <a class="footnote-reference brackets" href="#id6" id="id7">3</a>. I used to work with nRF5 SDK, but I have switched to the RTOS based SDK, and I must admin that I really like it.</p>
+<p>Not every nRF-based project requires radio communication, sometimes it’s all about controlling a bunch of GPIOs. Although using nRF for flashing an LED sounds like a massive overkill, it might happen that a development board with an nRF chip is the only available in a room. No 8-bit ATmegas within reach, just you and that scary board with countless components. Would a project based on Zephyr RTOS handle this? Definitely. Would it be an overkill level 1000? Absolutely. Can it be lighter? Sure!</p>
+<section id="cmsis">
+<h2>CMSIS<a class="headerlink" href="#cmsis" title="Permalink to this heading"></a></h2>
+<p>Everyone knows CMSIS, right? It’s just a bunch of headers and source codes to make bootstrapping ARM-based projects less painful. CMSIS exposes an interface of very basic functionalities which are the same across different ARM processors, an example could be a set of functions for controlling NVIC or SysTick timer. Thanks to this, a code written for Cortex-M4 should also work with Cortex-M3, or Cortex-M0. This of course applies only to the common stuff, and any device-specific logic won’t simply work when moved directly to another device, but that’s perfectly enough.</p>
+<p>So, can it be used with nRF? Of course! They are based on ARM chips, that means the low-level behavior is consistent with other ARM-based solutions. Let’s see that it’s not that hard to setup a very simple working project.</p>
+</section>
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<p>There are only two requirements: <a class="reference external" href="https://www.arm.com/technologies/cmsis">CMSIS</a> <a class="footnote-reference brackets" href="#id10" id="id11">5</a>, the <a class="reference external" href="https://developer.arm.com/downloads/-/gnu-rm">ARM GCC</a> <a class="footnote-reference brackets" href="#id8" id="id9">4</a>, and of course a board with nRF chip; mine is <a class="reference external" href="https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK">nRF52840 DK</a> <a class="footnote-reference brackets" href="#id12" id="id13">6</a>.</p>
+</section>
+<section id="project-files">
+<h2>Project files<a class="headerlink" href="#project-files" title="Permalink to this heading"></a></h2>
+<section id="makefile">
+<h3>Makefile<a class="headerlink" href="#makefile" title="Permalink to this heading"></a></h3>
+<p>To keep it simple stupid, the project is built around a Makefile. So, here is the Makefile:</p>
+<div class="highlight-Makefile notranslate"><div class="highlight"><pre><span></span><span class="nv">CMSIS_DIR</span> <span class="o">=</span> /opt/CMSIS_5-5.9.0
+<span class="nv">ARMCM4_DIR</span> <span class="o">=</span> <span class="k">$(</span>CMSIS_DIR<span class="k">)</span>/Device/ARM/ARMCM4
+<span class="nv">CMSIS_SRCS</span> <span class="o">=</span> <span class="se">\</span>
+      <span class="k">$(</span>ARMCM4_DIR<span class="k">)</span>/Source/startup_ARMCM4.c <span class="se">\</span>
+      <span class="k">$(</span>ARMCM4_DIR<span class="k">)</span>/Source/system_ARMCM4.c
+<span class="nv">CMSIS_INCLUDES</span> <span class="o">=</span> <span class="se">\</span>
+      <span class="k">$(</span>ARMCM4_DIR<span class="k">)</span>/Include <span class="se">\</span>
+      <span class="k">$(</span>CMSIS_DIR<span class="k">)</span>/CMSIS/Core/Include
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">clean</span> <span class="n">flash</span>
+
+<span class="nf">flash</span><span class="o">:</span> <span class="n">main</span>.<span class="n">hex</span>
+     nrfjprog -f nrf52 --program $^ --verify --reset --sectorerase
+
+<span class="nf">main.hex</span><span class="o">:</span> <span class="n">main</span>.<span class="n">elf</span>
+     arm-none-eabi-objcopy -O ihex $^ <span class="nv">$@</span>
+
+<span class="nf">main.elf</span><span class="o">:</span> <span class="n">main</span>.<span class="n">c</span>
+     arm-none-eabi-gcc <span class="se">\</span>
+             -mthumb <span class="se">\</span>
+             -mcpu<span class="o">=</span>cortex-m4 <span class="se">\</span>
+             -mfloat-abi<span class="o">=</span>hard <span class="se">\</span>
+             --specs<span class="o">=</span>nosys.specs <span class="se">\</span>
+             -Wl,-Tscript.ld <span class="se">\</span>
+             -D ARMCM4_FP <span class="se">\</span>
+             <span class="k">$(</span>foreach dir,<span class="k">$(</span>CMSIS_INCLUDES<span class="k">)</span>,-I<span class="k">$(</span>dir<span class="k">))</span> <span class="se">\</span>
+             -o <span class="nv">$@</span> <span class="se">\</span>
+             <span class="k">$(</span>CMSIS_SRCS<span class="k">)</span> $^
+
+<span class="nf">clean</span><span class="o">:</span>
+     rm -f  *.elf *.hex
+</pre></div>
+</div>
+<p>This is only a very basic Makefile. Possibly I miss a couple of additional GCC options which will make the binary smaller and optimized better but it’s not the goal of this article.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>It’s important to select a correct processor type, and use source codes and headers from appropriate directories. The compilation flags must match too. The above Makefile is targeting nRF52840, which is based on the Cortex-M4.</p>
+</div>
+</section>
+<section id="linker-script">
+<h3>Linker script<a class="headerlink" href="#linker-script" title="Permalink to this heading"></a></h3>
+<p>I copied a linker script from CMSIS (<code class="docutils literal notranslate"><span class="pre">&lt;CMSIS&gt;/Device/ARM/ARMCM4/Source/GCC/gcc_arm.ld</span></code>) to the project’s directory, and changed sizes of memories as following:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>__ROM_BASE = 0x00000000;
+__ROM_SIZE = 0x00100000;
+
+__RAM_BASE = 0x20000000;
+__RAM_SIZE = 0x00040000;
+
+__STACK_SIZE = 0x00000400;
+__HEAP_SIZE  = 0x00000C00;
+</pre></div>
+</div>
+<p>Sizes of a stack and a heap can be chosen arbitrarily. One can decide how much memory is needed for both, and a linker will show an error whenever any of them is overflowed. Other values must match values present in a chip’s datasheet, or else the code will be flashed to a wrong place in a memory.</p>
+</section>
+<section id="main-c">
+<h3>main.c<a class="headerlink" href="#main-c" title="Permalink to this heading"></a></h3>
+<p>The last element of the puzzle is obviously the code itself. Mine doesn’t do much, I just wanted to test whether it works, so what would be better than just turning on an LED? Since there’s no SDK on board, I have to figure out correct GPIO addresses by myself. On my board the LEDs are connected to pins <code class="docutils literal notranslate"><span class="pre">P0.13</span> <span class="pre">-</span> <span class="pre">P0.16</span></code>. A quick look to the <a class="reference external" href="https://infocenter.nordicsemi.com/topic/ps_nrf52840/gpio.html?cp=5_0_0_5_8">documentation</a> <a class="footnote-reference brackets" href="#id14" id="id15">7</a> reveals that the <strong>P0</strong> is based at <code class="docutils literal notranslate"><span class="pre">0x50000300</span></code>, the register responsible for a pin direction has offset <code class="docutils literal notranslate"><span class="pre">0x514</span></code>, and the one for output state has <code class="docutils literal notranslate"><span class="pre">0x504</span></code>.</p>
+<p>Good, now let’s turn a single LED. To do this the GPIOs have to be obviously in the output mode, and not obviously cleared. Why? Because LEDs on the board are tied to VDD and to the port, so the port must sink the current.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="n">dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="mh">0x50000514</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="mh">0x50000504</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="o">*</span><span class="n">dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="mb">0b1111</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">13</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="o">*</span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">13</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Yeah, but GPIOs are easy, other things are probably complicated as hell, right? Some of them are indeed, no one would want to play with the radio peripherals on pure registers without a very good reason. I’m not saying it’s impossible, everything is possible, it just takes precious time… Speaking of time, below is a classical example of a blinking LED built on a timer peripheral. It clearly shows that even more complex peripherals are fairly easy to operate with raw register access.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;system_ARMCM4.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ARMCM4_FP.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#define GPIO_BASE       0x50000000</span>
+<span class="cp">#define TIMER_BASE      0x40008000</span>
+
+<span class="cp">#define TIMER(n, o) static uint32_t * const timer_ ## n = (uint32_t *) (TIMER_BASE + o)</span>
+<span class="cp">#define GPIO(n, o) static uint32_t * const gpio_ ## n = (uint32_t *) (GPIO_BASE + o)</span>
+
+<span class="n">GPIO</span><span class="p">(</span><span class="n">dir</span><span class="p">,</span><span class="w"> </span><span class="mh">0x514</span><span class="p">);</span><span class="w"></span>
+<span class="n">GPIO</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="mh">0x504</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">TIMER</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="mh">0x0</span><span class="p">);</span><span class="w"></span>
+<span class="n">TIMER</span><span class="p">(</span><span class="n">bitmode</span><span class="p">,</span><span class="w"> </span><span class="mh">0x508</span><span class="p">);</span><span class="w"></span>
+<span class="n">TIMER</span><span class="p">(</span><span class="n">prescaler</span><span class="p">,</span><span class="w"> </span><span class="mh">0x510</span><span class="p">);</span><span class="w"></span>
+<span class="n">TIMER</span><span class="p">(</span><span class="n">intenset</span><span class="p">,</span><span class="w"> </span><span class="mh">0x304</span><span class="p">);</span><span class="w"></span>
+<span class="n">TIMER</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span><span class="w"> </span><span class="mh">0x540</span><span class="p">);</span><span class="w"></span>
+<span class="n">TIMER</span><span class="p">(</span><span class="n">event</span><span class="p">,</span><span class="w"> </span><span class="mh">0x140</span><span class="p">);</span><span class="w"></span>
+<span class="n">TIMER</span><span class="p">(</span><span class="n">shorts</span><span class="p">,</span><span class="w"> </span><span class="mh">0x200</span><span class="p">);</span><span class="w"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">Interrupt8_Handler</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="o">*</span><span class="n">gpio_out</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">13</span><span class="p">);</span><span class="w"></span>
+<span class="w">   </span><span class="o">*</span><span class="n">timer_event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="o">*</span><span class="n">gpio_dir</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="p">(</span><span class="mb">0b1111</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">13</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="o">*</span><span class="n">gpio_out</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="p">(</span><span class="mb">0b1111</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">13</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="o">*</span><span class="n">timer_prescaler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="o">*</span><span class="n">timer_bitmode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="o">*</span><span class="n">timer_intenset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">16</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="o">*</span><span class="n">timer_cc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">125000</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="o">*</span><span class="n">timer_shorts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">NVIC_ClearPendingIRQ</span><span class="p">(</span><span class="n">Interrupt8_IRQn</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">NVIC_EnableIRQ</span><span class="p">(</span><span class="n">Interrupt8_IRQn</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="o">*</span><span class="n">timer_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The code is really simple, it just looks complicated due to my macros (I’m too lazy to copy-paste-change registers constants). In the main method I’m configuring the timer to fire a compare event every second. The formula for calculating the interrupt frequency:</p>
+<div class="math notranslate nohighlight">
+\[f_i = \frac{16\text{MHz}}{CC\cdot 2^P} = \frac{16000000}{125000\cdot 2^7} = 1\text{Hz}\]</div>
+<p>The misty <code class="docutils literal notranslate"><span class="pre">*timer_shorts</span> <span class="pre">=</span> <span class="pre">1</span></code> enables a shortcut between a compare event and a clear task, i.e. when the compare event happens, the timer is cleared immediately.</p>
+</section>
+</section>
+<section id="final-thoughts">
+<h2>Final thoughts<a class="headerlink" href="#final-thoughts" title="Permalink to this heading"></a></h2>
+<p>I was prepared for a harder work but I must admit I had more troubles with doing the analogous stuff with <strong>STM32F103</strong>. Obviously, if I had to dig deeper and code more complex things, doing this at such low level would be cumbersome. But, if the application is supposed to be simple, like some basic readings, writings, UART, etc., then I will definitely think twice before I begin the project with nRF SDK or nRF Connect on board.</p>
+<p>Don’t get me wrong, I really like the concept of nRF Connect, I’m currently developing a bigger project on it, and it serves me very well.</p>
+<p>—</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id3">1</a></span></dt>
+<dd><p><a class="reference external" href="https://www.nordicsemi.com/Products/Development-software/nrf5-sdk">https://www.nordicsemi.com/Products/Development-software/nrf5-sdk</a></p>
+</dd>
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id5">2</a></span></dt>
+<dd><p><a class="reference external" href="https://www.nordicsemi.com/Products/Development-software/nrf-connect-sdk">https://www.nordicsemi.com/Products/Development-software/nrf-connect-sdk</a></p>
+</dd>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id7">3</a></span></dt>
+<dd><p><a class="reference external" href="https://docs.zephyrproject.org/latest/index.html">https://docs.zephyrproject.org/latest/index.html</a></p>
+</dd>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id9">4</a></span></dt>
+<dd><p><a class="reference external" href="https://developer.arm.com/downloads/-/gnu-rm">https://developer.arm.com/downloads/-/gnu-rm</a></p>
+</dd>
+<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id11">5</a></span></dt>
+<dd><p><a class="reference external" href="https://www.arm.com/technologies/cmsis">https://www.arm.com/technologies/cmsis</a></p>
+</dd>
+<dt class="label" id="id12"><span class="brackets"><a class="fn-backref" href="#id13">6</a></span></dt>
+<dd><p><a class="reference external" href="https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK">https://www.nordicsemi.com/Products/Development-hardware/nRF52840-DK</a></p>
+</dd>
+<dt class="label" id="id14"><span class="brackets"><a class="fn-backref" href="#id15">7</a></span></dt>
+<dd><p><a class="reference external" href="https://infocenter.nordicsemi.com/topic/ps_nrf52840/gpio.html?cp=5_0_0_5_8">https://infocenter.nordicsemi.com/topic/ps_nrf52840/gpio.html?cp=5_0_0_5_8</a></p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../linker-script/linker-script.html" class="btn btn-neutral float-left" title="Linker Script from scratch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../robocopy/robocopy.html" class="btn btn-neutral float-right" title="Robocopy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Itachi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7S93SGB655"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-7S93SGB655', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

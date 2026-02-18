@@ -30,7 +30,7 @@ highlight_language = 'text'
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
-html_extra_path = ['.nojekyll']
+html_extra_path = ['.nojekyll', 'google9549684a226df657.html']
 html_theme_options = {
     'logo_only': True,
     'analytics_id': 'G-7S93SGB655',

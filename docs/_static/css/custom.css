@@ -1,0 +1,35 @@
+.wy-side-nav-search {
+    background-color: #111;
+}
+
+.wy-nav-top {
+	background: #111;
+}
+
+.wy-menu-vertical header, .wy-menu-vertical p.caption {
+    color: #ff3434;
+}
+
+a {
+    color: #ff3434;
+}
+
+a:hover {
+    color: #ff5e5e;
+}
+
+a:visited {
+    color: #b65959;
+}
+
+.wy-menu-vertical a {
+    color: #d9d9d9;
+}
+
+.wy-menu-vertical a:active {
+    background-color: #b92929;
+}
+
+.wy-side-nav-search .wy-dropdown > a:hover, .wy-side-nav-search > a:hover {
+    background: none;
+}

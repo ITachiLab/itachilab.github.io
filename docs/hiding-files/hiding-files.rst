@@ -17,5 +17,4 @@ The target of the nasty code is *explorer.exe*. After a quick debugging, I've fo
 
 `NtQueryDirectoryFile`_ takes a decent number of parameters, but only two of them are interesting for the nasty purpose:
 
-:FileInformationClass: the type of the requested information
-:adf: fdsfs
+.. warning:: This article is in progress.

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 # Configuration file for the Sphinx documentation builder.
 #
 # For the full list of built-in configuration values, see the documentation:
@@ -7,7 +9,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'Itachi Lab Docs'
-copyright = '2023, Itachi'
+copyright = f"{datetime.today().year}, Itachi"
 author = 'Itachi'
 
 # -- General configuration ---------------------------------------------------

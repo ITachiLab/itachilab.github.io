@@ -6,39 +6,46 @@ This is a half-personal, half-public knowledge base where I'm gathering articles
 Some of the articles are ancient, written a couple of years ago when I was younger and had more time. Although they might be outdated, I still decided to keep them, just because of nostalgia, and for the pure sake of keeping my stuff together.
 
 .. toctree::
-    :hidden:
-    :maxdepth: 2
-    :caption: General
+   :hidden:
+   :maxdepth: 2
+   :caption: General
 
-    lacrosse-tx3/lacrosse-tx3.rst
-    brainfuck-assembler/brainfuck-assembler.rst
-
-.. toctree::
-    :hidden:
-    :maxdepth: 2
-    :caption: Raspberry Pi
-
-    initramfs-pi/initramfs-pi.rst
-    u-boot-on-raspberry/u-boot-on-raspberry.rst
+   lacrosse-tx3/lacrosse-tx3.rst
+   brainfuck-assembler/brainfuck-assembler.rst
 
 .. toctree::
-    :hidden:
-    :maxdepth: 2
-    :caption: Embedded
+   :hidden:
+   :maxdepth: 2
+   :caption: Raspberry Pi
 
-    arbitrary-data-in-binary/arbitrary-data-in-binary.rst
-    linker-script/linker-script.rst
-    nrf-cmsis/nrf-cmsis.rst
+   initramfs-pi/initramfs-pi.rst
+   u-boot-on-raspberry/u-boot-on-raspberry.rst
 
 .. toctree::
-    :hidden:
-    :maxdepth: 2
-    :caption: Windows
+   :hidden:
+   :maxdepth: 2
+   :caption: Embedded
 
-    robocopy/robocopy.rst
-    0x204/0x204.rst
-    lenovo-bluetooth/lenovo-bluetooth.rst
-    hiding-files/hiding-files.rst
+   arbitrary-data-in-binary/arbitrary-data-in-binary.rst
+   linker-script/linker-script.rst
+   nrf-cmsis/nrf-cmsis.rst
+
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+   :caption: Windows
+
+   robocopy/robocopy.rst
+   0x204/0x204.rst
+   lenovo-bluetooth/lenovo-bluetooth.rst
+   hiding-files/hiding-files.rst
+
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+   :caption: Linux
+
+   luks-btrfs/luks-btrfs.rst
 
 .. toctree::
    :hidden:
